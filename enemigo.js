@@ -3,11 +3,12 @@ class Enemigos {
     constructor(app, contenedor) {
         this.app = app;
         this.contenedor = contenedor;
+       
         this.gruposCirculos = [];
-        this.numCirculosPorGrupo = 10;
+        this.numCirculosPorGrupo = 5;
         this.numGrupos = 5;
         this.radio = 5;
-        this.velocidadCirculos = 1;
+        this.velocidadCirculos = 0.25;
 
         this.crearGrupos();
     }
@@ -39,7 +40,7 @@ class Enemigos {
     }
 
     aumentarVisibilidad(luzActivada) {
-        const nuevaAlpha = luzActivada ? 0.5 : 0.15;
+        const nuevaAlpha = luzActivada ? 1 : 0.15;
         this.gruposCirculos.forEach(grupo => {
             grupo.children.forEach(circulo => {
                 circulo.alpha = nuevaAlpha;

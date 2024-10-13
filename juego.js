@@ -1,10 +1,28 @@
+/*Anotaciones
+ -Arreglar efecto rebote del personaje con obstaculos
+ -Persecucuin de los circulos generados cuando colisiona con obstaculos
+ -Generar solo una vez los circilos cuando choca
+ 
+ -Game over
+ 
+ -Ampliar entorno
+ 
+ -Seguimiento de camara
+ 
+ -Que los elementos sigan en su ubicacion
+ 
+ */
+
+
+
+
 class Elementos {
     constructor(contenedor) {
         this.contenedor = contenedor; // Contenedor donde se mostrarán los elementos
         this.temporizadorTexto = this.crearTexto('03:00', 20, 20); // Crea el temporizador
         this.barraDeVidasTexto = this.crearTexto('X X X', 600, 20); // Crea la barra de vidas
         this.tiempoRestante = 180; // Tiempo total en segundos
-
+        
         this.iniciarTemporizador(); 
     }
 
@@ -56,10 +74,20 @@ class Juego {
 
         this.enemigos = new Enemigos(this.app, this.contenedor);
         this.elementos = new Elementos(this.contenedor);
-        this.personaje = new Personaje(this.app, this.elementos); // Pasa la instancia de elementos
+
+        this.personaje = new Personaje(this.app, this.elementos/*, this.gameOver.bind(this)*/); // Pasa el método gameOver a personaje
+
+        this.enemigosGrandes = new EnemigosGrandes(this.app, this.contenedor); // Agrega enemigos grandes
+    
+        this.obstaculos = [];
+        for (let i = 0; i < 5; i++) {
+            this.obstaculos.push(new Obstaculo(this.app, this.contenedor));
+        } //Creacion de obstaculos
 
         this.contenedor.addChild(this.personaje.sprite);
         this.contenedor.addChild(this.personaje.luz);
+
+        this.circulosGenerados = [];
 
         this.app.ticker.add(() => this.update());
     }
@@ -68,10 +96,30 @@ class Juego {
         this.personaje.mover();
         this.enemigos.moverCirculos(this.personaje);
         this.enemigos.aumentarVisibilidad(this.personaje.luzActivada);
+
+        this.enemigosGrandes.mover(this.personaje);
+
+
+         // Verificar colisiones con obstáculos
+         this.obstaculos.forEach(obstaculo => {
+            if (obstaculo.verificarColision(this.personaje)) {
+                console.log("Colisión con obstáculo!");
+            }
+            obstaculo.reaccionarALuz(this.personaje.luzActivada); // Hacer que reaccionen a la luz
+            
+            // Mover círculos generados y verificar colisiones con el personaje
+            this.circulosGenerados.forEach(circulo => {
+            circulo.mover(this.personaje); // Mueve el círculo
+            this.personaje.verificarColision(circulo); // Verifica colisión con el personaje
+        });
+        
+        });
     }
+   
    /* gameOver() {
+        console.log("El juego ha terminado"); //Comprueba si funciona
         this.app.ticker.stop(); // Detiene el ticker de PIXI
-        this.mostrarMensajeFin(); // Llama a un método para mostrar un mensaje de fin
+        this.mostrarMensajeFin(); // Muestra el mensaje de fin
     }
 
     mostrarMensajeFin() {

@@ -2,6 +2,9 @@ class Personaje {
     constructor(app, elementos) { // Acepta elementos como parámetro
         this.app = app;
         this.elementos = elementos; // Guarda la instancia
+        /*this.gameOver = gameOver;*/
+        this.velocidadRebote = 10; //  velocidad del rebote
+        
         this.vidas = 3;
         this.velocidad = 5;
 
@@ -22,8 +25,11 @@ class Personaje {
         this.luzActivada = false;
 
         this.setupInput();
+
+    
     }
 
+    // Presionar la luz
     setupInput() {
         window.addEventListener('keydown', (event) => {
             this.teclas[event.key] = true;
@@ -38,6 +44,7 @@ class Personaje {
         });
     }
 
+    //Movimientos al presionar teclado asdw
     mover() {
         const xAnterior = this.sprite.x;
         const yAnterior = this.sprite.y;
@@ -58,36 +65,40 @@ class Personaje {
         this.luz.y = this.sprite.y;
     }
 
+    verificarColision(circulo) {
+        const dx = circulo.x - this.sprite.x;
+        const dy = circulo.y - this.sprite.y;
+        const distancia = Math.sqrt(dx * dx + dy * dy);
 
-    gameOver() {
-        this.app.ticker.stop(); // Detiene el ticker de PIXI
-        this.mostrarMensajeFin(); // Llama a un método para mostrar un mensaje de fin
+        if (distancia < 25 + 5) { // Radio del personaje + radio del círculo
+            this.rebotar(dx, dy);
+            return true;
+        }
+        return false;
     }
 
-    mostrarMensajeFin() {
-        const estiloTexto = new PIXI.TextStyle({
-            fontFamily: 'Arial',
-            fontSize: 48,
-            fill: 'red',
-            align: 'center'
-        });
+    rebotar(dx, dy) {
+        // Calcular dirección del rebote
+        const normalX = dx / Math.abs(dx);
+        const normalY = dy / Math.abs(dy);
 
-        const textoFin = new PIXI.Text('¡Juego Terminado!', estiloTexto);
-        textoFin.x = this.app.renderer.width / 2 - textoFin.width / 2;
-        textoFin.y = this.app.renderer.height / 2 - textoFin.height / 2;
-
-        this.app.stage.addChild(textoFin);
+        // Mover el personaje en la dirección opuesta
+        this.sprite.x -= normalX * this.velocidadRebote;
+        this.sprite.y -= normalY * this.velocidadRebote;
     }
 
-    updateVidas() {
+
+
+  updateVidas() {
         this.vidas--;
         this.elementos.actualizarBarraDeVidas(this.vidas); // Actualiza la barra de vidas
         if (this.vidas <= 0) {
             console.log("¡Juego terminado!");
-            //  llamar a un método en la clase Juego para finalizar el juego
-            gameOver(); //  instancia de PIXI.Application
+            /*this.gameOver();*/ // Llama al método gameOver de Juego
         }
     }
+
+
 }
 
 
