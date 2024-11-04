@@ -3,9 +3,9 @@ class EnemigosGrandes {
         this.app = app;
         this.contenedor = contenedor;
         this.enemigos = [];
-        this.numEnemigos = 5; // Número de enemigos grandes
-        this.radio = 30; // Radio de los enemigos grandes
-        this.velocidad = 1.5; // Velocidad de persecución
+        this.numEnemigos = 5; 
+        this.radio = 30; 
+        this.velocidad = 1.5; 
 
         this.crearEnemigos();
     }
@@ -18,19 +18,22 @@ class EnemigosGrandes {
             enemigo.endFill();
             enemigo.x = Math.random() * this.app.renderer.width;
             enemigo.y = Math.random() * this.app.renderer.height;
+            enemigo.vidas = 3; 
             this.enemigos.push(enemigo);
             this.contenedor.addChild(enemigo);
         }
     }
 
+
+
     mover(personaje) {
-        this.enemigos.forEach(enemigo => {
+        this.enemigos.forEach((enemigo, index) => {
             const dx = personaje.sprite.x - enemigo.x;
             const dy = personaje.sprite.y - enemigo.y;
             const distancia = Math.sqrt(dx * dx + dy * dy);
 
-            // Persigue al personaje si la luz está activada y está dentro de un rango
-            if (personaje.luzActivada && distancia < 300) { // Rango de persecución
+            // Persigue al personaje
+            if (personaje.luzActivada && distancia < 400) { 
                 const dirX = (dx / distancia) * this.velocidad;
                 const dirY = (dy / distancia) * this.velocidad;
 
@@ -38,11 +41,34 @@ class EnemigosGrandes {
                 enemigo.y += dirY;
 
                 // Verificar colisión con el personaje
-                if (distancia < this.radio + 25) { // 25 es el radio del personaje
+                if (distancia < this.radio + 25) { // 
                     personaje.updateVidas(); // Resta una vida al personaje
-                    console.log("¡Colisión con enemigo grande!");
+                    /*this.atacarEnemigo(enemigo);*/ 
                 }
             }
+
         });
+    }
+
+   /* atacarEnemigo(enemigo) {
+        enemigo.vidas--; // Resta una vida al enemigo
+        console.log(` Enemigo atacado. Vidas restantes: ${enemigo.vidas}`);
+
+        // Si el enemigo muere
+        if (enemigo.vidas <= 0) {
+            this.destruirEnemigo(enemigo);
+        }
+    }*/
+
+    destruirEnemigo(enemigo) {
+        this.contenedor.removeChild(enemigo);
+        
+        // Elimina al enemigo del array
+        const index = this.enemigos.indexOf(enemigo);
+        if (index > -1) {
+            this.enemigos.splice(index, 1);
+        }
+
+        console.log("¡Muerto!");
     }
 }

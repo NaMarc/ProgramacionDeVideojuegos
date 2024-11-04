@@ -1,147 +1,124 @@
 /*Anotaciones
  -Arreglar efecto rebote del personaje con obstaculos
- -Persecucuin de los circulos generados cuando colisiona con obstaculos
- -Generar solo una vez los circilos cuando choca
- 
- -Game over
- 
- -Ampliar entorno
- 
- -Seguimiento de camara
- 
- -Que los elementos sigan en su ubicacion
- 
+
+ -Implementar asset
+
+ -Cambiar imagenes por las definitivas
+
+ -Colisiones
+
+ -Maquina de estados
+
+ -grid
  */
-
-
-
-
-class Elementos {
-    constructor(contenedor) {
-        this.contenedor = contenedor; // Contenedor donde se mostrarán los elementos
-        this.temporizadorTexto = this.crearTexto('03:00', 20, 20); // Crea el temporizador
-        this.barraDeVidasTexto = this.crearTexto('X X X', 600, 20); // Crea la barra de vidas
-        this.tiempoRestante = 180; // Tiempo total en segundos
-        
-        this.iniciarTemporizador(); 
-    }
-
-    crearTexto(texto, x, y) {
-        const estiloTexto = new PIXI.TextStyle({
-            fontFamily: 'Arial',
-            fontSize: 36,
-            fill: 'white',
-            align: 'center'
-        });
-        const textoPixi = new PIXI.Text(texto, estiloTexto);
-        textoPixi.x = x; 
-        textoPixi.y = y; 
-        this.contenedor.addChild(textoPixi); 
-        return textoPixi; 
-    }
-
-    iniciarTemporizador() {
-        // Inicia un temporizador que se actualiza cada segundo
-        setInterval(() => {
-            if (this.tiempoRestante > 0) {
-                this.tiempoRestante--;
-                const minutos = Math.floor(this.tiempoRestante / 60); // Calcula minutos restantes
-                const segundos = this.tiempoRestante % 60; // Calcula segundos restantes
-                // Actualiza el texto del temporizador
-                this.temporizadorTexto.text = `${String(minutos).padStart(2, '0')}:${String(segundos).padStart(2, '0')}`;
-            } else {
-                console.log("¡Tiempo agotado!"); // Mensaje de tiempo agotado
-            }
-        }, 1000); // Actualiza cada 1000 ms (1 segundo)
-    }
-
-    actualizarBarraDeVidas(vidas) {
-        this.barraDeVidasTexto.text = 'X '.repeat(vidas).trim(); // Actualiza la barra de vidas
-    }
-}
 
 class Juego {
     constructor() {
         this.app = new PIXI.Application({
             width: window.innerWidth * 2,
             height: window.innerHeight * 2,
-            backgroundColor: 0x333333
+            backgroundColor: 0x006400 
         });
         document.body.appendChild(this.app.view);
 
         this.contenedor = new PIXI.Container();
         this.app.stage.addChild(this.contenedor);
 
+        this.agregarFondo(); 
+
+        //
+
         this.enemigos = new Enemigos(this.app, this.contenedor);
-        this.elementos = new Elementos(this.contenedor);
+        this.elementos = new Elementos(this.app, this.contenedor, this);
 
-        this.personaje = new Personaje(this.app, this.elementos/*, this.gameOver.bind(this)*/); // Pasa el método gameOver a personaje
+        this.eventos = new Eventos(this.app, this.contenedor);
 
-        this.enemigosGrandes = new EnemigosGrandes(this.app, this.contenedor); // Agrega enemigos grandes
-    
+        this.personaje = new Personaje(this.app, this.elementos, this.eventos); 
+        this.enemigosGrandes = new EnemigosGrandes(this.app, this.contenedor);
+
+
+        // Creación de obstáculos arboles (cambiar / mejorar -->)
         this.obstaculos = [];
         for (let i = 0; i < 5; i++) {
-            this.obstaculos.push(new Obstaculo(this.app, this.contenedor));
-        } //Creacion de obstaculos
+            this.obstaculos.push(new Obstaculo(this.app, this.contenedor, 'assets/arbol3.png'));
+        } 
+        for (let i = 0; i < 5; i++) {
+            this.obstaculos.push(new Obstaculo(this.app, this.contenedor, 'assets/roca1.png'));
+        } 
+       
 
         this.contenedor.addChild(this.personaje.sprite);
         this.contenedor.addChild(this.personaje.luz);
 
-        this.circulosGenerados = [];
+        //INTANCIAS DE EVENTOS
+        this.win = new Win(this.app, this.contenedor);
+        this.gameOver = new GameOver(this.app, this.contenedor);
 
+        this.circulosGenerados = [];
         this.app.ticker.add(() => this.update());
     }
 
+    agregarFondo() {
+        const fondoTextura = PIXI.Texture.from('Assets/Pasto1.png'); //Cambiar imagen
+        const fondoSprite = new PIXI.Sprite(fondoTextura);
+
+        // Ajustar 
+        fondoSprite.width = this.app.view.width;
+        fondoSprite.height = this.app.view.height;
+
+        this.contenedor.addChildAt(fondoSprite, 0); 
+    }
+
+    //COMPLETAR
+    condicionDeVictoria(){
+        if(this.elementos.temporizador && this.elementos.temporizador.tiempoAgotado){
+            console.log('gano')
+            this.win.mostrar();
+            this.app.ticker.stop();
+        }
+    }
+
+    condicionDeDerrota(){
+        if (this.personaje.vidas === 0){
+            console.log('perdio')
+            this.gameOver.mostrar();
+            this.app.ticker.stop();
+        } 
+}
+   
     update() {
+
+
         this.personaje.mover();
         this.enemigos.moverCirculos(this.personaje);
         this.enemigos.aumentarVisibilidad(this.personaje.luzActivada);
-
         this.enemigosGrandes.mover(this.personaje);
 
+        this.condicionDeVictoria();
+        this.condicionDeDerrota();
 
-         // Verificar colisiones con obstáculos
-         this.obstaculos.forEach(obstaculo => {
+        // Verificar colisiones con obstáculos y círculos
+        this.obstaculos.forEach(obstaculo => {
             if (obstaculo.verificarColision(this.personaje)) {
                 console.log("Colisión con obstáculo!");
             }
-            obstaculo.reaccionarALuz(this.personaje.luzActivada); // Hacer que reaccionen a la luz
-            
-            // Mover círculos generados y verificar colisiones con el personaje
-            this.circulosGenerados.forEach(circulo => {
-            circulo.mover(this.personaje); // Mueve el círculo
-            this.personaje.verificarColision(circulo); // Verifica colisión con el personaje
+            obstaculo.reaccionarALuz(this.personaje.luzActivada);
         });
-        
+    
+        this.circulosGenerados.forEach(circulo => {
+            circulo.mover(this.personaje);
+            this.personaje.verificarColision(circulo);
         });
+
+        // Actualizar la posición del contenedor para seguir al personaje
+        this.contenedor.x = -this.personaje.sprite.x + window.innerWidth / 2;
+        this.contenedor.y = -this.personaje.sprite.y + window.innerHeight / 2;
     }
-   
-   /* gameOver() {
-        console.log("El juego ha terminado"); //Comprueba si funciona
-        this.app.ticker.stop(); // Detiene el ticker de PIXI
-        this.mostrarMensajeFin(); // Muestra el mensaje de fin
-    }
-
-    mostrarMensajeFin() {
-        const estiloTexto = new PIXI.TextStyle({
-            fontFamily: 'Arial',
-            fontSize: 48,
-            fill: 'red',
-            align: 'center'
-        });
-
-        const textoFin = new PIXI.Text('¡Juego Terminado!', estiloTexto);
-        textoFin.x = this.app.renderer.width / 2 - textoFin.width / 2;
-        textoFin.y = this.app.renderer.height / 2 - textoFin.height / 2;
-
-        this.app.stage.addChild(textoFin);
-    }*/
 }
 
 const juego = new Juego();
 
-
-// Ajusta el tamaño del canvas al redimensionar la ventana
+// *Render 
 window.addEventListener('resize', () => {
-    juego.app.renderer.resize(window.innerWidth, window.innerHeight); // Redimensiona el renderer
+    juego.app.renderer.resize(window.innerWidth * 2, window.innerHeight * 2);
 });

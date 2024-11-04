@@ -1,11 +1,11 @@
-
 class Enemigos {
     constructor(app, contenedor) {
         this.app = app;
         this.contenedor = contenedor;
+
        
         this.gruposCirculos = [];
-        this.numCirculosPorGrupo = 5;
+        this.numCirculosPorGrupo = 2;
         this.numGrupos = 5;
         this.radio = 5;
         this.velocidadCirculos = 0.25;
@@ -55,7 +55,7 @@ class Enemigos {
                 const dy = personaje.sprite.y - circulo.y;
                 const distancia = Math.sqrt(dx * dx + dy * dy);
 
-                if (distancia > 0) {
+                if (distancia > 0 && !circulo.colisionado) { // Solo mover si no ha colisionado
                     const dirX = (dx / distancia) * this.velocidadCirculos;
                     const dirY = (dy / distancia) * this.velocidadCirculos;
 
@@ -63,13 +63,27 @@ class Enemigos {
                     circulo.y += dirY;
 
                     // Verificar colisión con el personaje
-                    if (distancia < this.radio + 25 && !circulo.colisionado) { // 25 es el radio del personaje
-                        personaje.updateVidas(); // Resta una vida al personaje
-                        circulo.colisionado = true; // Marca el círculo como colisionado
-                        console.log(`Colisión detectada! Vidas restantes: ${personaje.vidas}`);
+                    if (distancia < this.radio + 25 ) { //Radio del personaje
+                        personaje.updateVidas(); 
+                        circulo.colisionado = true; 
+                        console.log(`Colisióna. Vidas restantes del personaje: ${personaje.vidas}`);
+                        this.eliminarCirculo(circulo, grupo); 
                     }
                 }
             });
         });
     }
+    
+    eliminarCirculo(circulo, grupo) {
+        grupo.removeChild(circulo); 
+        const index = grupo.children.indexOf(circulo);
+        if (index > -1) {
+            grupo.children.splice(index, 1); // Elimina del array de hijos
+        }
+    }
 }
+    
+
+
+
+
