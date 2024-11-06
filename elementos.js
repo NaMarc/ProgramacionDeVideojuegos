@@ -11,8 +11,9 @@ class Elementos {
         this.juego = juego;
         
         this.barraDeVida = new BarraDeVida(this.app, 300, 20);
-        this.temporizador = new Temporalizador(this.app, 1099, 280, 180, this.juego);
+        this.temporizador = new Temporalizador(this.app, 1099, 280, 60, this.juego); /**Cambiar tiempo inicial a 180 */
         this.contador = new Contador(this.app, 1099, 400 ); //Quitar? Contador de bichos muertos
+        this.indicadorDeLuz = new IndicadorDeLuz(this.app, 105, 65 );
     }
 
     perderVida() {
@@ -70,7 +71,7 @@ class Temporalizador {
             fill: 'white',
             align: 'center'
         });
-        const textoPixi = new PIXI.Text('03:00', estiloTexto);
+        const textoPixi = new PIXI.Text('01:00', estiloTexto);/**Volver a 03:00 */
 
         //Centrar en el circulo
         textoPixi.anchor.set(0.5); 
@@ -92,7 +93,7 @@ class Temporalizador {
             } else {
                 console.log("¡Tiempo agotado!"); 
                 this.tiempoAgotado = true;
-                this.juego.condicionDeVictoria();
+               /* this.juego.condicionDeVictoria();*/
             }
         }, 1000);
     }
@@ -112,6 +113,23 @@ class Temporalizador {
 
 //Agregar contador de insectos muertos.
 class Contador{
+    constructor(app, x, y){
+        this.app = app;
+        this.crearCirculoContador(x, y); 
+    }
+
+    crearCirculoContador(x, y){
+        const circuloContador = new PIXI.Graphics();
+        circuloContador.beginFill(0xD3D3D3); //gris
+        circuloContador.alpha = 0.30;
+        circuloContador.drawCircle(x , y , 50); 
+        circuloContador.endFill();
+        
+        this.app.stage.addChild(circuloContador); 
+    }
+}
+
+class IndicadorDeLuz{
     constructor(app, x, y){
         this.app = app;
         this.crearCirculoContador(x, y); 

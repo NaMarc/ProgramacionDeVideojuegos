@@ -24,17 +24,16 @@ class Juego {
         this.contenedor = new PIXI.Container();
         this.app.stage.addChild(this.contenedor);
 
+        
+
         this.agregarFondo(); 
+        this.iniciarElementos();
+        this.iniciarEventos();
 
         //
 
-        this.enemigos = new Enemigos(this.app, this.contenedor);
-        this.elementos = new Elementos(this.app, this.contenedor, this);
 
-        this.eventos = new Eventos(this.app, this.contenedor);
-
-        this.personaje = new Personaje(this.app, this.elementos, this.eventos); 
-        this.enemigosGrandes = new EnemigosGrandes(this.app, this.contenedor);
+        
 
 
         // Creación de obstáculos arboles (cambiar / mejorar -->)
@@ -43,16 +42,13 @@ class Juego {
             this.obstaculos.push(new Obstaculo(this.app, this.contenedor, 'assets/arbol3.png'));
         } 
         for (let i = 0; i < 5; i++) {
-            this.obstaculos.push(new Obstaculo(this.app, this.contenedor, 'assets/roca1.png'));
+            this.obstaculos.push(new Obstaculo(this.app, this.contenedor, 'assets/arbusto.png'));
         } 
        
 
         this.contenedor.addChild(this.personaje.sprite);
         this.contenedor.addChild(this.personaje.luz);
 
-        //INTANCIAS DE EVENTOS
-        this.win = new Win(this.app, this.contenedor);
-        this.gameOver = new GameOver(this.app, this.contenedor);
 
         this.circulosGenerados = [];
         this.app.ticker.add(() => this.update());
@@ -69,10 +65,23 @@ class Juego {
         this.contenedor.addChildAt(fondoSprite, 0); 
     }
 
-    //COMPLETAR
+    iniciarElementos(){
+        this.enemigos = new Enemigos(this.app, this.contenedor);
+        this.elementos = new Elementos(this.app, this.contenedor, this);
+        this.personaje = new Personaje(this.app, this.elementos, this.eventos); 
+        this.enemigosGrandes = new EnemigosGrandes(this.app, this.contenedor);
+    }
+
+    iniciarEventos(){
+        this.eventos = new Eventos(this.app, this.contenedor);
+        this.win = new Win(this.app, this.contenedor);
+        this.gameOver = new GameOver(this.app, this.contenedor);
+    }
+
+    //*
     condicionDeVictoria(){
         if(this.elementos.temporizador && this.elementos.temporizador.tiempoAgotado){
-            console.log('gano')
+            console.log('gano');
             this.win.mostrar();
             this.app.ticker.stop();
         }
@@ -94,8 +103,9 @@ class Juego {
         this.enemigos.aumentarVisibilidad(this.personaje.luzActivada);
         this.enemigosGrandes.mover(this.personaje);
 
-        this.condicionDeVictoria();
+       
         this.condicionDeDerrota();
+        this.condicionDeVictoria();
 
         // Verificar colisiones con obstáculos y círculos
         this.obstaculos.forEach(obstaculo => {
@@ -120,5 +130,5 @@ const juego = new Juego();
 
 // *Render 
 window.addEventListener('resize', () => {
-    juego.app.renderer.resize(window.innerWidth * 2, window.innerHeight * 2);
+    juego.app.renderer.resize(window.innerWidth, window.innerHeight);
 });

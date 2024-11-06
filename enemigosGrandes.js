@@ -3,7 +3,7 @@ class EnemigosGrandes {
         this.app = app;
         this.contenedor = contenedor;
         this.enemigos = [];
-        this.numEnemigos = 5; 
+        this.numEnemigos = 5; //Ampliar?
         this.radio = 30; 
         this.velocidad = 1.5; 
 
@@ -39,36 +39,36 @@ class EnemigosGrandes {
 
                 enemigo.x += dirX;
                 enemigo.y += dirY;
-
-                // Verificar colisión con el personaje
-                if (distancia < this.radio + 25) { // 
-                    personaje.updateVidas(); // Resta una vida al personaje
-                    /*this.atacarEnemigo(enemigo);*/ 
-                }
             }
+            // Verificar colisión con el personaje
+             if (distancia < this.radio + 5) { // 
+                personaje.updateVidas(); // Resta una vida al personaje
+                /*this.atacarEnemigo(enemigo);*/ 
+             }
+           
 
-        });
+       });
     }
-
-   /* atacarEnemigo(enemigo) {
-        enemigo.vidas--; // Resta una vida al enemigo
-        console.log(` Enemigo atacado. Vidas restantes: ${enemigo.vidas}`);
-
-        // Si el enemigo muere
-        if (enemigo.vidas <= 0) {
-            this.destruirEnemigo(enemigo);
-        }
-    }*/
 
     destruirEnemigo(enemigo) {
         this.contenedor.removeChild(enemigo);
         
         // Elimina al enemigo del array
-        const index = this.enemigos.indexOf(enemigo);
+       const index = this.enemigos.indexOf(enemigo);
         if (index > -1) {
             this.enemigos.splice(index, 1);
         }
 
-        console.log("¡Muerto!");
+        console.log(" Mantis eliminada");
     }
+
+    
 }
+
+
+
+
+
+
+
+

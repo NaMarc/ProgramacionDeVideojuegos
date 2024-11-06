@@ -26,18 +26,27 @@ class Eventos {
     
     mostrar() {
         if (!this.mensajeMostrado) {
-            this.contenedor.addChild(this.eventoTexto);
+            this.app.ticker.add(() => {
+                
+                this.contenedor.addChild(this.eventoTexto);
+            });
+           /* this.contenedor.addChild(this.eventoTexto);*/
+
             this.eventoTexto.visible = true;
             this.mensajeMostrado = true; 
             console.log('funciona');
         }
+    
     }
 }
 class Win extends Eventos {
     constructor(app, contenedor) {
         super(app, contenedor); 
-        this.eventoTexto = this.crearTexto('WIN', app.renderer.width / 2, app.renderer.height / 2, 'green');
+        this.eventoTexto = this.crearTexto('WIN',  app.renderer.width / 2, app.renderer.height / 2, 'green');
         this.eventoTexto.visible = false; 
+
+
+       
     }
 }
 
@@ -47,4 +56,8 @@ class GameOver extends Eventos {
         this.eventoTexto = this.crearTexto('GAME OVER', app.renderer.width / 2, app.renderer.height / 2, 'red');
         this.eventoTexto.visible = false; 
     }
+}
+
+class Inicio{
+    
 }
