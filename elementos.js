@@ -1,7 +1,7 @@
 /*Por hacer 
     -indicador de luz
     -completar contador de muertos
-    -conf */
+*/
 
 class Elementos { 
     constructor(app, contenedor, juego) {
@@ -137,9 +137,9 @@ class IndicadorDeLuz{
 
     crearCirculoContador(x, y){
         const circuloContador = new PIXI.Graphics();
-        circuloContador.beginFill(0xD3D3D3); //gris
+        circuloContador.beginFill(0xFFFF99); //amarillo
         circuloContador.alpha = 0.30;
-        circuloContador.drawCircle(x , y , 50); 
+        circuloContador.drawCircle(x , y , 40); 
         circuloContador.endFill();
         
         this.app.stage.addChild(circuloContador); 

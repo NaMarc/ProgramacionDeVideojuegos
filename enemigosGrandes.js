@@ -27,6 +27,8 @@ class EnemigosGrandes {
 
 
     mover(personaje) {
+        let tiempoDeEspera = 1500;
+
         this.enemigos.forEach((enemigo, index) => {
             const dx = personaje.sprite.x - enemigo.x;
             const dy = personaje.sprite.y - enemigo.y;
@@ -41,9 +43,14 @@ class EnemigosGrandes {
                 enemigo.y += dirY;
             }
             // Verificar colisión con el personaje
-             if (distancia < this.radio + 5) { // 
-                personaje.updateVidas(); // Resta una vida al personaje
-                /*this.atacarEnemigo(enemigo);*/ 
+             if (distancia < this.radio + 5) { //
+                let tiempoActual = Date.now()
+                if(tiempoActual - enemigo.ultimoAtaque >= tiempoDeEspera || !enemigo.ultimoAtaque){
+                    enemigo.ultimoAtaque = tiempoActual;
+                    personaje.updateVidas(); // Resta una vida al personaje
+                  /*this.atacarEnemigo(enemigo);*/   
+                } 
+                
              }
            
 

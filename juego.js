@@ -1,15 +1,15 @@
 /*Anotaciones
  -Arreglar efecto rebote del personaje con obstaculos
 
- -Implementar asset
-
- -Cambiar imagenes por las definitivas
+ -Implementar assets / Cambiar imagenes por las definitivas
 
  -Colisiones
 
  -Maquina de estados
 
- -grid
+ -Grid
+
+ -Ajustar velocidades y numero de enemigos.
  */
 
 class Juego {
@@ -24,7 +24,7 @@ class Juego {
         this.contenedor = new PIXI.Container();
         this.app.stage.addChild(this.contenedor);
 
-        
+        /*this.estadoFuncionando = false;*/
 
         this.agregarFondo(); 
         this.iniciarElementos();
@@ -32,8 +32,6 @@ class Juego {
 
         //
 
-
-        
 
 
         // Creación de obstáculos arboles (cambiar / mejorar -->)
@@ -73,9 +71,12 @@ class Juego {
     }
 
     iniciarEventos(){
-        this.eventos = new Eventos(this.app, this.contenedor);
-        this.win = new Win(this.app, this.contenedor);
-        this.gameOver = new GameOver(this.app, this.contenedor);
+        this.eventos = new Eventos(this.app, this.contenedor, this.personaje);
+        this.win = new Win(this.app, this.contenedor, this.personaje);
+        this.gameOver = new GameOver(this.app, this.contenedor, this.personaje);
+        
+
+
     }
 
     //*
@@ -103,9 +104,9 @@ class Juego {
         this.enemigos.aumentarVisibilidad(this.personaje.luzActivada);
         this.enemigosGrandes.mover(this.personaje);
 
-       
         this.condicionDeDerrota();
         this.condicionDeVictoria();
+
 
         // Verificar colisiones con obstáculos y círculos
         this.obstaculos.forEach(obstaculo => {

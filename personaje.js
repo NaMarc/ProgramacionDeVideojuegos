@@ -3,7 +3,7 @@ class Personaje {
         this.app = app;
 
         this.elementos = elementos; 
-       // this.velocidadRebote = 10; 
+        this.velocidadRebote = 10; 
         this.eventos = eventos; 
 
         this.vidas = 3;
@@ -28,8 +28,13 @@ class Personaje {
         this.setupInput();
     }
 
-
-
+    //
+    posicionActualEnX(){
+        return this.sprite.x
+    }
+    posicionActualEnY(){
+        return this.sprite.y
+    }
     // Imputs (Modificar atacar - COMPLETAR)
     setupInput() {
         window.addEventListener('keydown', (event) => {
@@ -61,9 +66,11 @@ class Personaje {
         // Restringir movimiento dentro de los límites
         if (this.sprite.x <= 0 || this.sprite.x >= this.app.renderer.width) {
             this.sprite.x = xAnterior;
+           
         }
         if (this.sprite.y <= 0 || this.sprite.y >= this.app.renderer.height) {
             this.sprite.y = yAnterior;
+          
         }
 
         // Posición de la luz
@@ -80,23 +87,31 @@ class Personaje {
         const distancia = Math.sqrt(dx * dx + dy * dy);
 
         if (distancia < 25 + 5) { // Radio del personaje + radio del círculo
-            /*this.rebotar(dx, dy); */ 
+            this.rebotar(dx, dy); 
             return true;
         }
         return false;
     }
 
      //Método para rebotar 
-    rebotar(dx, dy) {
-       const distancia = Math.sqrt(dx * dx + dy * dy);
-       const normalX = dx / distancia;
-       const normalY = dy / distancia;
-
-       this.sprite.x -= normalX * this.velocidadRebote;
-       this.sprite.y -= normalY * this.velocidadRebote;
-
-       this.velocidadRebote *= 0.9; 
-    }
+    /* rebotar(dx, dy) {
+        const distancia = Math.sqrt(dx * dx + dy * dy);
+        const normalX = dx / distancia;
+        const normalY = dy / distancia;
+    
+        // Desplazamiento progresivo
+        this.sprite.x += normalX * this.velocidadRebote;
+        this.sprite.y += normalY * this.velocidadRebote;
+    
+        // Reducir la velocidad de rebote
+        this.velocidadRebote *= 0.9;
+    
+        // Evitar que la velocidad de rebote se haga demasiado pequeña
+        if (this.velocidadRebote < 0.1) {
+            this.velocidadRebote = 0;
+        }
+    }*/
+    
     
 
     // VIDAS
