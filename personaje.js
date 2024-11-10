@@ -18,11 +18,27 @@ class Personaje {
         this.sprite.x = 540; 
         this.sprite.y = 360;
 
-        this.luz = new PIXI.Graphics();
+       /* this.luz = new PIXI.Graphics();
         this.luz.beginFill(0xFFFF99, 0.15); //Amarillo
         this.luz.drawCircle(0, 0, 250);
         this.luz.endFill();
+        this.luz.visible = false;*/
+
+        //LUZ
+        this.luz = PIXI.Sprite.from('./Assets/luz.png'); //Modificar imagen
+        this.luz.anchor.set(0.5);
+        this.luz.x = 0;
+        this.luz.y = 0;
+
+        this.luz.width = window.innerWidth;
+        this.luz.height = window.innerHeight;
+
+        this.luz.alpha = 0.15;
+
         this.luz.visible = false;
+
+        app.stage.addChild(this.luz);
+
 
         this.teclas = {};
         this.luzActivada = false;

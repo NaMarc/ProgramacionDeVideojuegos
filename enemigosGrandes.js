@@ -1,7 +1,8 @@
 class EnemigosGrandes {
-    constructor(app, contenedor) {
+    constructor(app, contenedor, elementos) {
         this.app = app;
         this.contenedor = contenedor;
+        this.elementos = elementos;
         this.enemigos = [];
         this.numEnemigos = 5; //Ampliar?
         this.radio = 30; 
@@ -69,6 +70,7 @@ class EnemigosGrandes {
             const index = this.contenedor.getChildIndex(enemigo);
             if (index !== -1) {
                 this.contenedor.removeChild(enemigo);
+                /*this.elementos.Contador.incrementarContador();*/
                 console.log(`Enemigo con ID: ${enemigo.id} ha sido eliminado.`);
             }
 

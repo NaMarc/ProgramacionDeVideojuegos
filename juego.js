@@ -95,6 +95,11 @@ class Juego {
             this.app.ticker.stop();
         } 
 }
+
+    /*actualizarPosicionDelContenedor(){
+        
+ 
+    }*/
    
     update() {
 
@@ -106,6 +111,8 @@ class Juego {
 
         this.condicionDeDerrota();
         this.condicionDeVictoria();
+
+        /*this.actualizarPosicionDelContenedor();*/
 
 
         // Verificar colisiones con obstáculos y círculos
@@ -124,6 +131,12 @@ class Juego {
         // Actualizar la posición del contenedor para seguir al personaje
         this.contenedor.x = -this.personaje.sprite.x + window.innerWidth / 2;
         this.contenedor.y = -this.personaje.sprite.y + window.innerHeight / 2;
+
+
+        
+
+
+    
     }
 }
 

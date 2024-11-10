@@ -11,8 +11,8 @@ class Elementos {
         this.juego = juego;
         
         this.barraDeVida = new BarraDeVida(this.app, 300, 20);
-        this.temporizador = new Temporalizador(this.app, 1099, 280, 60, this.juego); /**Cambiar tiempo inicial a 180 */
-        this.contador = new Contador(this.app, 1099, 400 ); //Quitar? Contador de bichos muertos
+        this.temporizador = new Temporalizador(this.app, 1099, 80, 60, this.juego); /**Cambiar tiempo inicial a 180 */
+        this.contador = new Contador(this.app, 990, 80 ); //Quitar? Contador de bichos muertos
         this.indicadorDeLuz = new IndicadorDeLuz(this.app, 105, 65 );
     }
 
@@ -115,8 +115,12 @@ class Temporalizador {
 class Contador{
     constructor(app, x, y){
         this.app = app;
+        this.score = 0;
+        this.numerosContador = this.crearTexto(x, y); 
         this.crearCirculoContador(x, y); 
     }
+
+   
 
     crearCirculoContador(x, y){
         const circuloContador = new PIXI.Graphics();
@@ -127,8 +131,44 @@ class Contador{
         
         this.app.stage.addChild(circuloContador); 
     }
+
+    crearTexto(x, y) {
+        const estiloTexto = new PIXI.TextStyle({
+            fontFamily: 'Tiny5',
+            fontSize: 34,
+            fill: 'white',
+            align: 'center'
+        });
+        const textoPixi = new PIXI.Text('0000', estiloTexto);
+
+        //Centrar en el circulo
+        textoPixi.anchor.set(0.5); 
+        textoPixi.x = x; 
+        textoPixi.y = y; 
+
+        this.app.stage.addChild(textoPixi); 
+        return textoPixi;
+    }
+
+   /* incrementarContador(){
+        this.score +=1;
+        this.numerosContador.text = this.formatearPuntaje();
+    }
+
+    resetearContador(){
+        this.score = 0;
+        this.numerosContador.text = this.formatearPuntaje();
+
+    }
+
+    formatearPuntaje(){
+        return this.score.toString().padStart(4, '0');
+    }*/
 }
 
+
+
+//Agregar imagen de la antorcha
 class IndicadorDeLuz{
     constructor(app, x, y){
         this.app = app;
@@ -144,5 +184,6 @@ class IndicadorDeLuz{
         
         this.app.stage.addChild(circuloContador); 
     }
+    
 }
 
