@@ -18,23 +18,24 @@ class EnemigosGrandes {
             enemigo.endFill();
             enemigo.x = Math.random() * this.app.renderer.width;
             enemigo.y = Math.random() * this.app.renderer.height;
-            enemigo.vidas = 3; 
+            enemigo.id = `enemigo_${Math.floor(Math.random() * 1000000)}_${i}`;
+            console.log(`Enemigo creado con ID: ${enemigo.id}`);
+            enemigo.eliminado = false;  
             this.enemigos.push(enemigo);
             this.contenedor.addChild(enemigo);
         }
     }
 
-
-
     mover(personaje) {
-        let tiempoDeEspera = 1500;
+        this.enemigos.forEach((enemigo) => {
 
-        this.enemigos.forEach((enemigo, index) => {
+            if (enemigo.eliminado) return;
+
             const dx = personaje.sprite.x - enemigo.x;
             const dy = personaje.sprite.y - enemigo.y;
             const distancia = Math.sqrt(dx * dx + dy * dy);
 
-            // Persigue al personaje
+            // Persigue al personaje si la luz esta activada
             if (personaje.luzActivada && distancia < 400) { 
                 const dirX = (dx / distancia) * this.velocidad;
                 const dirY = (dy / distancia) * this.velocidad;
@@ -42,37 +43,45 @@ class EnemigosGrandes {
                 enemigo.x += dirX;
                 enemigo.y += dirY;
             }
-            // Verificar colisión con el personaje
-             if (distancia < this.radio + 5) { //
-                let tiempoActual = Date.now()
-                if(tiempoActual - enemigo.ultimoAtaque >= tiempoDeEspera || !enemigo.ultimoAtaque){
-                    enemigo.ultimoAtaque = tiempoActual;
-                    personaje.updateVidas(); // Resta una vida al personaje
-                  /*this.atacarEnemigo(enemigo);*/   
-                } 
-                
-             }
-           
 
-       });
+            //Colision con el personaje 
+            if (distancia < this.radio + 5) { 
+
+                
+                if (personaje.estadoAtacando) {
+                    this.destruirEnemigo(enemigo);
+                    console.log(`Enemigo con ID: ${enemigo.id} ha sido destruido.`);
+                }
+
+                
+                let tiempoActual = Date.now();
+                if (tiempoActual - enemigo.ultimoAtaque >= 1500 || !enemigo.ultimoAtaque) {
+                    enemigo.ultimoAtaque = tiempoActual;
+                    personaje.updateVidas(); 
+                }
+            }
+        });
     }
 
     destruirEnemigo(enemigo) {
-        this.contenedor.removeChild(enemigo);
-        
-        // Elimina al enemigo del array
-       const index = this.enemigos.indexOf(enemigo);
-        if (index > -1) {
-            this.enemigos.splice(index, 1);
+        if (!enemigo.eliminado) {
+            // getChildIndex para verificar si el enemigo está en el contenedor
+            const index = this.contenedor.getChildIndex(enemigo);
+            if (index !== -1) {
+                this.contenedor.removeChild(enemigo);
+                console.log(`Enemigo con ID: ${enemigo.id} ha sido eliminado.`);
+            }
+
+            enemigo.eliminado = true;
+
+            // Eliminarlo del array de enemigos
+            const indexEnemigo = this.enemigos.indexOf(enemigo);
+            if (indexEnemigo > -1) {
+                this.enemigos.splice(indexEnemigo, 1);
+            }
         }
-
-        console.log(" Mantis eliminada");
     }
-
-    
 }
-
-
 
 
 

@@ -9,6 +9,8 @@ class Personaje {
         this.vidas = 3;
         this.velocidad = 5;
 
+        this.estadoAtacando = false;
+
         this.sprite = new PIXI.Graphics();
         this.sprite.beginFill(0xFFFF00);
         this.sprite.drawCircle(0, 0, 25);
@@ -38,20 +40,28 @@ class Personaje {
     // Imputs (Modificar atacar - COMPLETAR)
     setupInput() {
         window.addEventListener('keydown', (event) => {
+            
             this.teclas[event.key] = true;
             if (event.key === ' ') {
                 this.luzActivada = !this.luzActivada;
                 this.luz.visible = this.luzActivada;
             }
-            if (event.key.toLowerCase() === 'f') {
-               // this.atacar();
+            if (event.key.toLowerCase() === 'f') { //**Cambiar */
+                console.log('atacando');
+                this.estadoAtacando = true;
             }
         });
 
         window.addEventListener('keyup', (event) => {
             this.teclas[event.key] = false;
+
+            if (event.key.toLowerCase() === 'f') {
+                this.estadoAtacando = false;
+            }
         });
     }
+
+    
 
     
     mover() {
