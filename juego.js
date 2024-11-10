@@ -22,29 +22,30 @@ class Juego {
         document.body.appendChild(this.app.view);
 
         this.contenedor = new PIXI.Container();
+        this.contenedor.name = "contendor"
+        this.agregarFondo(); 
         this.app.stage.addChild(this.contenedor);
+        this.contenedor.sortableChildren = true;
+
+        this.contadorDeFrame = 0
 
         /*this.estadoFuncionando = false;*/
 
-        this.agregarFondo(); 
+        this.grid = new Grid(this, 50);
+        this.obstaculos = [];
+        this.enemigos = [];
+
+        this.agregarObstaculo("arbol", 20);
+        this.agregarObstaculo("piedra", 10);
+        this.agregarObstaculo("arbusto", 10);
+
         this.iniciarElementos();
         this.iniciarEventos();
 
         //
-
-
-
-        // Creación de obstáculos arboles (cambiar / mejorar -->)
-        this.obstaculos = [];
-        for (let i = 0; i < 5; i++) {
-            this.obstaculos.push(new Obstaculo(this.app, this.contenedor, 'assets/arbol3.png'));
-        } 
-        for (let i = 0; i < 5; i++) {
-            this.obstaculos.push(new Obstaculo(this.app, this.contenedor, 'assets/arbusto.png'));
-        } 
        
 
-        this.contenedor.addChild(this.personaje.sprite);
+        //this.contenedor.addChild(this.personaje.sprite);
         this.contenedor.addChild(this.personaje.luz);
 
 
@@ -53,14 +54,33 @@ class Juego {
     }
 
     agregarFondo() {
-        const fondoTextura = PIXI.Texture.from('Assets/Pasto1.png'); //Cambiar imagen
-        const fondoSprite = new PIXI.Sprite(fondoTextura);
+        this.contenedorFondo = new PIXI.Container();
+        this.textura = PIXI.Texture.from("Assets/Pasto3.png");
+        this.fondoSprite = new PIXI.TilingSprite(this.textura, this.app.view.width, this.app.view.height);
+        this.contenedorFondo.addChild(this.fondoSprite);
+        this.contenedor.addChild(this.contenedorFondo);
+    }
+    agregarObstaculo(tipo, cantidad) {
+        if (tipo === "arbol") {
+            for (let i = 0; i < cantidad; i++) {
+                this.obstaculos.push(new Obstaculo(Math.random() * this.ancho, Math.random() * this.alto, this, "Assets/arbol3.png"));
+                //this.obstaculos.escalar(3);
+            }
+        }
+        if (tipo === "piedra") {
+            for (let i = 0; i < cantidad; i++) {
+                this.obstaculos.push(new Obstaculo(Math.random() * this.ancho, Math.random() * this.alto, this, "Assets/roca1.png"));
+                //this.obstaculos.escalar(0.5);
+            }
+        }
+        if (tipo === "arbusto") {
+            for (let i = 0; i < cantidad; i++) {
+                this.obstaculos.push(new Obstaculo(Math.random() * this.ancho, Math.random() * this.alto, this, "assets/arbusto.png"));
+                //this.obstaculos.escalar(0.5);
+            }
+        }
 
-        // Ajustar 
-        fondoSprite.width = this.app.view.width;
-        fondoSprite.height = this.app.view.height;
 
-        this.contenedor.addChildAt(fondoSprite, 0); 
     }
 
     iniciarElementos(){
@@ -102,7 +122,12 @@ class Juego {
     }*/
    
     update() {
+        this.contadorDeFrame++;
+        for (let obstaculo of this.obstaculos) {
+            obstaculo.actualizar();
+        }
 
+        this.personaje.actualizar();
 
         this.personaje.mover();
         this.enemigos.moverCirculos(this.personaje);
