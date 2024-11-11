@@ -1,6 +1,6 @@
-class Personaje {
-    constructor(app, elementos, eventos) { 
-        this.app = app;
+class Personaje extends Objeto{
+    constructor(x, y, juego, elementos, eventos) { 
+        super(x, y, juego);
 
         this.elementos = elementos; 
         this.velocidadRebote = 10; 
@@ -12,11 +12,12 @@ class Personaje {
         this.estadoAtacando = false;
 
         this.sprite = new PIXI.Graphics();
+        this.innerContainer.addChild(this.sprite);
         this.sprite.beginFill(0xFFFF00);
-        this.sprite.drawCircle(0, 0, 25);
+        this.sprite.drawCircle(this.x, this.y, 25);
         this.sprite.endFill();
-        this.sprite.x = 540; 
-        this.sprite.y = 360;
+        this.sprite.x = this.x;
+        this.sprite.y = this.y;
 
        /* this.luz = new PIXI.Graphics();
         this.luz.beginFill(0xFFFF99, 0.15); //Amarillo
@@ -26,9 +27,10 @@ class Personaje {
 
         //LUZ
         this.luz = PIXI.Sprite.from('./Assets/luz.png'); //Modificar imagen
+        this.innerContainer.addChild(this.luz);
         this.luz.anchor.set(0.5);
-        this.luz.x = 0;
-        this.luz.y = 0;
+        this.luz.x = this.x;
+        this.luz.y = this.y;
 
         this.luz.width = window.innerWidth;
         this.luz.height = window.innerHeight;
@@ -36,9 +38,6 @@ class Personaje {
         this.luz.alpha = 0.15;
 
         this.luz.visible = false;
-
-        app.stage.addChild(this.luz);
-
 
         this.teclas = {};
         this.luzActivada = false;
@@ -138,6 +137,9 @@ class Personaje {
         }
     }*/
     
+    actualizar() {
+        super.actualizar();
+    }
     
 
     // VIDAS

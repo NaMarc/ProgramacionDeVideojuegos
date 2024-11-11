@@ -4,10 +4,9 @@
  */
 
 
-class Obstaculo {
-    constructor(app, contenedor, imagenUrl) {
-        this.app = app;
-        this.contenedor = contenedor;
+class Obstaculo extends Objeto{
+    constructor(x, y, juego, imagenUrl) {
+        super(x, y , juego)
 
         //Textura- imagen
         this.textura = PIXI.Texture.from(imagenUrl);
@@ -22,7 +21,8 @@ class Obstaculo {
         this.sprite.x = Math.random() * (this.app.renderer.width - this.sprite.width);
         this.sprite.y = Math.random() * (this.app.renderer.height - this.sprite.height);
 
-        this.contenedor.addChild(this.sprite);
+        this.innerContainer.addChild(this.sprite);
+        this.actualizar();
     }
 
     verificarColision(personaje) {
@@ -83,6 +83,9 @@ class Obstaculo {
             circulo.y += dirY;
         }
     }*/
+    actualizar() {
+        super.actualizar();
+    }
 
     reaccionarALuz(luzActivada) {
         if (luzActivada) {
