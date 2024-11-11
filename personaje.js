@@ -11,26 +11,25 @@ class Personaje extends Objeto{
 
         this.estadoAtacando = false;
 
-        this.sprite = new PIXI.Graphics();
-        this.innerContainer.addChild(this.sprite);
-        this.sprite.beginFill(0xFFFF00);
-        this.sprite.drawCircle(this.x, this.y, 25);
-        this.sprite.endFill();
-        this.sprite.x = this.x;
-        this.sprite.y = this.y;
 
-       /* this.luz = new PIXI.Graphics();
+        this.textura = PIXI.Texture.from("Assets/Player1.png");
+        this.sprite = new PIXI.Sprite(this.textura);
+        this.contenedorObjeto.addChild(this.sprite);
+        this.sprite.scale.set(4);
+        this.sprite.anchor.set(0.5, 1);
+       
+
+
+        /*this.luz = new PIXI.Graphics();
         this.luz.beginFill(0xFFFF99, 0.15); //Amarillo
-        this.luz.drawCircle(0, 0, 250);
+        this.luz.drawCircle(x, y, 250);
         this.luz.endFill();
-        this.luz.visible = false;*/
+        this.luz.visible = false; */
 
         //LUZ
         this.luz = PIXI.Sprite.from('./Assets/luz.png'); //Modificar imagen
-        this.innerContainer.addChild(this.luz);
+        this.contenedorObjeto.addChild(this.luz);
         this.luz.anchor.set(0.5);
-        this.luz.x = this.x;
-        this.luz.y = this.y;
 
         this.luz.width = window.innerWidth;
         this.luz.height = window.innerHeight;
@@ -43,15 +42,17 @@ class Personaje extends Objeto{
         this.luzActivada = false;
 
         this.setupInput();
+        this.actualizar();
     }
 
     //
-    posicionActualEnX(){
+    /*posicionActualEnX(){
         return this.sprite.x
     }
     posicionActualEnY(){
         return this.sprite.y
-    }
+    }*/
+   
     // Imputs (Modificar atacar - COMPLETAR)
     setupInput() {
         window.addEventListener('keydown', (event) => {
@@ -61,7 +62,7 @@ class Personaje extends Objeto{
                 this.luzActivada = !this.luzActivada;
                 this.luz.visible = this.luzActivada;
             }
-            if (event.key.toLowerCase() === 'f') { //**Cambiar */
+            if (event.key.toLowerCase() === 'f') { //**Cambiar 
                 console.log('atacando');
                 this.estadoAtacando = true;
             }
@@ -77,23 +78,21 @@ class Personaje extends Objeto{
     }
 
     
-
-    
     mover() {
         const xAnterior = this.sprite.x;
         const yAnterior = this.sprite.y;
         //Mejorar
         if (this.teclas['w'] || this.teclas['W'] && this.sprite.y > 0) this.sprite.y -= this.velocidad;
-        if (this.teclas['s'] || this.teclas['S'] && this.sprite.y < this.app.renderer.height) this.sprite.y += this.velocidad;
+        if (this.teclas['s'] || this.teclas['S'] && this.sprite.y < this.juego.app.renderer.height) this.sprite.y += this.velocidad;
         if (this.teclas['a'] || this.teclas['A']  && this.sprite.x > 0) this.sprite.x -= this.velocidad;
-        if (this.teclas['d'] || this.teclas['D'] && this.sprite.x < this.app.renderer.width) this.sprite.x += this.velocidad;
+        if (this.teclas['d'] || this.teclas['D'] && this.sprite.x < this.juego.app.renderer.width) this.sprite.x += this.velocidad;
 
         // Restringir movimiento dentro de los límites
-        if (this.sprite.x <= 0 || this.sprite.x >= this.app.renderer.width) {
+        if (this.sprite.x <= 0 || this.sprite.x >= this.juego.app.renderer.width) {
             this.sprite.x = xAnterior;
            
         }
-        if (this.sprite.y <= 0 || this.sprite.y >= this.app.renderer.height) {
+        if (this.sprite.y <= 0 || this.sprite.y >= this.juego.app.renderer.height) {
             this.sprite.y = yAnterior;
           
         }
@@ -119,7 +118,7 @@ class Personaje extends Objeto{
     }
 
      //Método para rebotar 
-    /* rebotar(dx, dy) {
+    rebotar(dx, dy) {
         const distancia = Math.sqrt(dx * dx + dy * dy);
         const normalX = dx / distancia;
         const normalY = dy / distancia;
@@ -135,7 +134,7 @@ class Personaje extends Objeto{
         if (this.velocidadRebote < 0.1) {
             this.velocidadRebote = 0;
         }
-    }*/
+    }
     
     actualizar() {
         super.actualizar();
@@ -151,7 +150,7 @@ class Personaje extends Objeto{
 
             if (this.vidas === 0) {
                console.log("Fin");
-               /* this.eventos.mostrar();*/ 
+               // this.eventos.mostrar();
             }
         }
    }
