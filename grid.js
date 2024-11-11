@@ -15,7 +15,7 @@ class Grid{
             }
         }
     }
-    getCeldaPX(x, y) {
+   /* getCeldaPX(x, y) {
         const xIndex = Math.floor(x / this.tamanioCelda);
         const yIndex = Math.floor(y / this.tamanioCelda);
 
@@ -31,27 +31,25 @@ class Grid{
         let newy = Math.max(0, Math.min(this.celdasAlto - 1, y));
 
         return this.celdas[newx][newy];
-    }
+    }*/
     add(objeto) {
-        const xIndex = Math.floor(objeto.innerContainer.x / this.tamanioCelda);
-        const yIndex = Math.floor(objeto.innerContainer.y / this.tamanioCelda);
+        const xIndex = Math.floor(objeto.contenedorObjeto.x / this.tamanioCelda);
+        const yIndex = Math.floor(objeto.contenedorObjeto.y / this.tamanioCelda);
 
         const celda = this.getCelda(xIndex, yIndex);
-        if (!celda) return; //console.warn("Cell not found",xIndex,yIndex);
+        if (!celda) return;
         celda.agregar(objeto);
     }
 
     remove(objeto) {
-        // for (let i = 0; i < this.cells.length; i++) {
-        //   for (let j = 0; j < this.cells[i].length; j++) {
-        //     let cell = this.cells[i][j];
-        //     cell = cell.filter((k) => k != objeto);
-        //   }
-        // }
+        
         if (objeto.miCelda) {
             objeto.miCelda.sacar(objeto);
         }
+    }
 
-
+    update(objeto) {
+        this.remove(objeto); // Eliminar el objeto de su celda actual
+        this.add(objeto); // Volver a agregar el objeto a la celda nueva
     }
 }

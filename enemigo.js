@@ -1,9 +1,8 @@
-class Enemigos {
-    constructor(app, contenedor) {
+class Enemigo {
+    constructor(app,contenedor) {
         this.app = app;
         this.contenedor = contenedor;
-
-       
+        
         this.gruposCirculos = [];
         this.numCirculosPorGrupo = 2;
         this.numGrupos = 5;
@@ -23,20 +22,20 @@ class Enemigos {
     }
 
     crearGrupoCirculos(color) {
-        const grupo = new PIXI.Container();
+        //const grupo = new PIXI.Container();
         for (let i = 0; i < this.numCirculosPorGrupo; i++) {
             const circulo = new PIXI.Graphics();
             circulo.beginFill(color);
             circulo.alpha = 0.15;
             circulo.drawCircle(0, 0, this.radio);
             circulo.endFill();
-            circulo.x = Math.random() * this.app.renderer.width;
-            circulo.y = Math.random() * this.app.renderer.height;
+            circulo.x = Math.random() * this.juego.app.renderer.width;
+            circulo.y = Math.random() * this.juego.app.renderer.height;
             circulo.colisionado = false;
             grupo.addChild(circulo);
         }
         this.gruposCirculos.push(grupo);
-        this.contenedor.addChild(grupo);
+        this.contenedor.addChild(this.contenedorObjeto);
     }
 
     aumentarVisibilidad(luzActivada) {

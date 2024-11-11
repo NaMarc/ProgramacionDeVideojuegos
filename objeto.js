@@ -1,22 +1,18 @@
 //Todavia no implementar
 
-class Obejeto{
+class Objeto{
     constructor(x, y, juego){
-        this.contenedorDeCadaObjeto = new PIXI.Container();
-        this.contenedorDeCadaObjeto.name = "contenedorDeCadaObjeto"
-        this.innerContainer = new PIXI.Container();
-        this.innerContainer.name = "innerContainer"
-        this.contenedorDeCadaObjeto.addChild(this.innerContainer);
-
         this.juego = juego;
+        this.contenedorObjeto = new PIXI.Container();
+        this.contenedorObjeto.name = "contenedorObjeto"
+        this.juego.contenedor.addChild(this.contenedorObjeto);
+
+        
         
         this.id = randomID(8);
 
-        this.juego.contenedor.addChild(this.contenedorDeCadaObjeto);
-        
-
-        this.x = x;
-        this.y = y;
+        this.contenedorObjeto.x = x;
+        this.contenedorObjeto.y = y;
         //this.velocidad = { x: 0, y: 0 };
         //this.acc = { x: 0, y: 0 };
         
@@ -24,9 +20,10 @@ class Obejeto{
         
     }
     
+
     actualizarPosicionEnGrid() {
-        this.gridX = Math.floor(this.x / this.juego.grid.tamanioCelda);
-        this.gridY = Math.floor(this.y / this.juego.grid.tamanioCelda);
+        this.gridX = Math.floor(this.contenedorObjeto.x / this.juego.grid.tamanioCelda);
+        this.gridY = Math.floor(this.contenedorObjeto.y / this.juego.grid.tamanioCelda);
 
         this.miCelda = this.juego.grid.celdas[this.gridX][this.gridY];
     }
@@ -34,17 +31,17 @@ class Obejeto{
    
     
     actualizarZIndex() {
-        this.innerContainer.zIndex = Math.floor(this.innerContainer.y);
+        this.contenedorObjeto.zIndex = Math.floor(this.contenedorObjeto.y);
     }
     actualizar(){
         //his.container.x += this.velocidad.x;
         //this.container.y += this.velocidad.y;
+        this.actualizarPosicionEnGrid();
 
         this.actualizarZIndex();
         //this.actualizarLado();
-        this.actualizarPosicionEnGrid();
-        this.contenedorDeCadaObjeto.x = this.x;
-        this.contenedorDeCadaObjeto.y = this.y;
+       
+
 
     }
 

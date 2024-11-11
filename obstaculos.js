@@ -7,6 +7,8 @@
 class Obstaculo extends Objeto{
     constructor(x, y, juego, imagenUrl) {
         super(x, y , juego)
+        this.tipo = "";
+       
 
         //Textura- imagen
         this.textura = PIXI.Texture.from(imagenUrl);
@@ -18,12 +20,14 @@ class Obstaculo extends Objeto{
         this.sprite.height = this.radio * 8; 
         
         // Posición aleatoria
-        this.sprite.x = Math.random() * (this.app.renderer.width - this.sprite.width);
-        this.sprite.y = Math.random() * (this.app.renderer.height - this.sprite.height);
+        //this.sprite.x = Math.random() * (this.app.renderer.width - this.sprite.width);
+        //this.sprite.y = Math.random() * (this.app.renderer.height - this.sprite.height);
 
-        this.innerContainer.addChild(this.sprite);
+        this.contenedorObjeto.addChild(this.sprite);
+    
         this.actualizar();
     }
+
 
     verificarColision(personaje) {
         const dx = personaje.sprite.x - this.sprite.x;
@@ -31,14 +35,14 @@ class Obstaculo extends Objeto{
         const distancia = Math.sqrt(dx * dx + dy * dy);
 
         // Colision con el personaje
-       /* if (distancia < this.radio + 25) { 
+        if (distancia < this.radio + 25) { 
             this.generarCirculos(personaje);
             return true; // Colisióna
         }
-        return false; // No hay colisión*/
+        return false; // No hay colisión
     }
 
-   /* generarCirculos(personaje) {
+    generarCirculos(personaje) {
         for (let i = 0; i < 3; i++) { // Generar 3 círculos por colisión
             const circulo = new PIXI.Graphics();
             circulo.beginFill(0xFFA500);
@@ -82,7 +86,8 @@ class Obstaculo extends Objeto{
             circulo.x += dirX;
             circulo.y += dirY;
         }
-    }*/
+    }
+
     actualizar() {
         super.actualizar();
     }
