@@ -1,8 +1,6 @@
-class EnemigosGrandes {
-    constructor(app, contenedor, elementos) {
-        this.app = app;
-        this.contenedor = contenedor;
-        this.elementos = elementos;
+class EnemigosGrandes extends Objeto {
+    constructor(x, y, juego) {
+        super(x, y , juego);
         this.enemigos = [];
         this.numEnemigos = 5; //Ampliar?
         this.radio = 30; 
@@ -11,7 +9,7 @@ class EnemigosGrandes {
         this.crearEnemigos();
     }
 
-    crearEnemigos() {
+    /*crearEnemigos() {
         for (let i = 0; i < this.numEnemigos; i++) {
             const enemigo = new PIXI.Graphics();
             enemigo.beginFill(0xFF0000);
@@ -25,7 +23,7 @@ class EnemigosGrandes {
             this.enemigos.push(enemigo);
             this.contenedor.addChild(enemigo);
         }
-    }
+    }*/
 
     mover(personaje) {
         this.enemigos.forEach((enemigo) => {

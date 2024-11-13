@@ -25,7 +25,7 @@ class Obstaculo extends Objeto{
 
         this.contenedorObjeto.addChild(this.sprite);
     
-        this.actualizar();
+        //this.actualizar();
     }
 
 
@@ -88,9 +88,9 @@ class Obstaculo extends Objeto{
         }
     }
 
-    actualizar() {
+    /*actualizar() {
         super.actualizar();
-    }
+    }*/
 
     reaccionarALuz(luzActivada) {
         if (luzActivada) {

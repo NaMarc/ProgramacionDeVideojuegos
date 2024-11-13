@@ -1,18 +1,27 @@
-class Enemigo {
-    constructor(app,contenedor) {
-        this.app = app;
-        this.contenedor = contenedor;
+class Enemigo extends Objeto{
+    constructor(x, y ,juego) {
+        super(x, y, juego);
         
-        this.gruposCirculos = [];
+        /*this.gruposCirculos = [];
         this.numCirculosPorGrupo = 2;
         this.numGrupos = 5;
         this.radio = 5;
         this.velocidadCirculos = 0.25;
 
-        this.crearGrupos();
+        //this.crearGrupos();*/
+        
+        //this.cargarSpriteAnimado("Assets/Moscas/texture.json", "Idle");
+    }
+    cargarSprite(){
+        this.textura = PIXI.Texture.from("Assets/moscaprueba.png");
+        this.sprite = new PIXI.Sprite(this.textura);
+        this.contenedorObjeto.addChild(this.sprite);
+        this.sprite.scale.set(0.15);
+        this.sprite.alpha = 0.15;
+
     }
 
-    crearGrupos() {
+    /*crearGrupos() {
         const colores = [0xFFA500, 0xFF0000, 0x008000];
         colores.forEach(color => {
             for (let i = 0; i < this.numGrupos; i++) {
@@ -36,15 +45,11 @@ class Enemigo {
         }
         this.gruposCirculos.push(grupo);
         this.contenedor.addChild(this.contenedorObjeto);
-    }
+    }*/
 
     aumentarVisibilidad(luzActivada) {
         const nuevaAlpha = luzActivada ? 1 : 0.15;
-        this.gruposCirculos.forEach(grupo => {
-            grupo.children.forEach(circulo => {
-                circulo.alpha = nuevaAlpha;
-            });
-        });
+        this.sprite.alpha = nuevaAlpha;
     }
 
     moverCirculos(personaje) {
@@ -54,7 +59,7 @@ class Enemigo {
                 const dy = personaje.sprite.y - circulo.y;
                 const distancia = Math.sqrt(dx * dx + dy * dy);
 
-                if (distancia > 0 && !circulo.colisionado) { // Solo mover si no ha colisionado
+                if (distancia > 0 && !objeto.colisionado) { // Solo mover si no ha colisionado
                     const dirX = (dx / distancia) * this.velocidadCirculos;
                     const dirY = (dy / distancia) * this.velocidadCirculos;
 
