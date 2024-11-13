@@ -35,27 +35,27 @@ class Juego {
 
         this.grid = new Grid(this, 50);
 
+        this.objetos = [];
         this.obstaculos = [];
         this.enemigos = [];
 
         this.agregarObstaculo("arbol", 20);
         this.agregarObstaculo("piedra", 10);
         this.agregarObstaculo("arbusto", 5);
-        //this.agregarEnemigos(50);
+        this.agregarEnemigos(50);
 
         //this.iniciarElementos();
         //this.iniciarEventos();
         
 
         //
-        this.personaje = new Personaje(100, 100, this, this.elementos, this.eventos); 
-       
+        this.personaje = new Personaje(50, 50, this, this.elementos, this.eventos); 
+        //this.objetos.push(personaje);
 
         //this.contenedor.addChild(this.personaje.sprite);
         //this.contenedor.addChild(this.personaje.luz);
 
 
-        this.circulosGenerados = [];
         this.update();
         //this.app.ticker.add(() => this.update());
         setTimeout(() => {
@@ -74,38 +74,41 @@ class Juego {
     agregarObstaculo(tipo, cantidad) {
         if (tipo === "arbol") {
             for (let i = 0; i < cantidad; i++) {
-                this.obstaculos.push(new Obstaculo(Math.random() * this.ancho, Math.random() * this.alto, this, "Assets/arbol3.png"));
-                 //Math.random() * (this.app.renderer.width - this.sprite.width);
+                const arbol = (new Obstaculo(Math.random() * this.ancho, Math.random() * this.alto, this, "Assets/arbol3.png"));
+                this.obstaculos.push(arbol);//Math.random() * (this.app.renderer.width - this.sprite.width);
+                this.objetos.push(arbol);
             }
         }
         if (tipo === "piedra") {
             for (let i = 0; i < cantidad; i++) {
-                this.obstaculos.push(new Obstaculo(Math.random() * this.ancho, Math.random() * this.alto, this, "Assets/roca2.png"));
-              
+                const piedra = (new Obstaculo(Math.random() * this.ancho, Math.random() * this.alto, this, "Assets/roca2.png"));
+                this.obstaculos.push(piedra);
+                this.objetos.push(piedra);
             }
         }
         if (tipo === "arbusto") {
             for (let i = 0; i < cantidad; i++) {
-                this.obstaculos.push(new Obstaculo(Math.random() * this.ancho, Math.random() * this.alto, this, "Assets/arbusto.png"));
-               
+                const arbusto = (new Obstaculo(Math.random() * this.ancho, Math.random() * this.alto, this, "Assets/arbusto.png"));
+                this.obstaculos.push(arbusto);
+                this.objetos.push(arbusto);
             }
         }
 
     }
 
-    /*agregarEnemigos(cant) {
+    agregarEnemigos(cant) {
         for (let i = 0; i < cant; i++) {
-            let velocidad = Math.random() * 1.3 + 1.5;
+           // let velocidad = Math.random() * 1.3 + 1.5;
             const mosquito = new Enemigo(
                 Math.random() * this.ancho,
                 Math.random() * this.alto,
-                velocidad,
+               // velocidad,
                 this
             ); // Pasar la grid a los mosquitos
             this.enemigos.push(mosquito);
-            this.grid.add(mosquito);
+            this.objetos.push(mosquito);
         }
-    }*/
+    }
 
     /*iniciarElementos(){
         this.enemigos = new Enemigos(this.app, this.contenedor);
@@ -148,11 +151,14 @@ class Juego {
     update() {
         this.contadorDeFrame++;
 
-        for (let obstaculo of this.obstaculos) {
-            obstaculo.actualizar();
+        for (let objeto of this.objetos) {
+            objeto.actualizar();
+            objeto.render();
+            
         }
 
         this.personaje.mover();
+
         //this.enemigos.moverCirculos(this.personaje);
         //this.enemigos.aumentarVisibilidad(this.personaje.luzActivada);
         //this.enemigosGrandes.mover(this.personaje);
@@ -176,12 +182,12 @@ class Juego {
             this.personaje.verificarColision(circulo);
         });*/
 
-        // Actualizar la posición del contenedor para seguir al personaje
-       // this.contenedor.x = -this.personaje.sprite.x + window.innerWidth / 2;
-        //this.contenedor.y = -this.personaje.sprite.y + window.innerHeight / 2;
+        //Actualizar la posición del contenedor para seguir al personaje
+        /*this.contenedor.x = -this.personaje.sprite.x + window.innerWidth / 2;
+        this.contenedor.y = -this.personaje.sprite.y + window.innerHeight / 2;
+        if (this.contenedor.x < 0) this.contenedor.x = 0;
+        if (this.contenedor.y < 0) this.contenedor.y = 0;*/
 
-
-        
 
 
     

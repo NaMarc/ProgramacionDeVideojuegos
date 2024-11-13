@@ -11,20 +11,16 @@ class Personaje extends Objeto{
 
         this.estadoAtacando = false;
 
+        this.teclas = {};
+        this.luzActivada = false;
 
-        this.textura = PIXI.Texture.from("Assets/Player1.png");
-        this.sprite = new PIXI.Sprite(this.textura);
+        this.cargarSpriteAnimado("Assets/Player/texture.json", "Idle");
+
+        /*this.sprite = new PIXI.Sprite(this.textura);
         this.contenedorObjeto.addChild(this.sprite);
         this.sprite.scale.set(4);
-        this.sprite.anchor.set(0.5, 1);
+        this.sprite.anchor.set(0.5, 1);*/
        
-
-
-        /*this.luz = new PIXI.Graphics();
-        this.luz.beginFill(0xFFFF99, 0.15); //Amarillo
-        this.luz.drawCircle(x, y, 250);
-        this.luz.endFill();
-        this.luz.visible = false; */
 
         //LUZ
         this.luz = PIXI.Sprite.from('./Assets/luz.png'); //Modificar imagen
@@ -38,22 +34,11 @@ class Personaje extends Objeto{
 
         this.luz.visible = false;
 
-        this.teclas = {};
-        this.luzActivada = false;
-
+        
         this.setupInput();
         this.actualizar();
     }
 
-    //
-    /*posicionActualEnX(){
-        return this.sprite.x
-    }
-    posicionActualEnY(){
-        return this.sprite.y
-    }*/
-   
-    // Imputs (Modificar atacar - COMPLETAR)
     setupInput() {
         window.addEventListener('keydown', (event) => {
             
@@ -79,35 +64,75 @@ class Personaje extends Objeto{
 
     
     mover() {
-        const xAnterior = this.sprite.x;
-        const yAnterior = this.sprite.y;
-        //Mejorar
-        if (this.teclas['w'] || this.teclas['W'] && this.sprite.y > 0) this.sprite.y -= this.velocidad;
-        if (this.teclas['s'] || this.teclas['S'] && this.sprite.y < this.juego.app.renderer.height) this.sprite.y += this.velocidad;
-        if (this.teclas['a'] || this.teclas['A']  && this.sprite.x > 0) this.sprite.x -= this.velocidad;
-        if (this.teclas['d'] || this.teclas['D'] && this.sprite.x < this.juego.app.renderer.width) this.sprite.x += this.velocidad;
+        if (!this.spriteCargado) return;  // Si el sprite no está cargado, no hacemos nada
 
-        // Restringir movimiento dentro de los límites
-        if (this.sprite.x <= 0 || this.sprite.x >= this.juego.app.renderer.width) {
-            this.sprite.x = xAnterior;
-           
-        }
-        if (this.sprite.y <= 0 || this.sprite.y >= this.juego.app.renderer.height) {
-            this.sprite.y = yAnterior;
-          
+        // Definir las animaciones y teclas asociadas
+        const animaciones = {
+            'w': 'CaminaArriba',
+            's': 'CaminaAbajo',
+            'a': 'CaminaIzq',
+            'd': 'CaminaDer',
+            'f': 'Ataca'
+        };
+
+        let animacionDeseada = '';
+
+        // Comprobar las teclas presionadas para determinar la animación
+        for (const tecla of ['w', 's', 'a', 'd', 'f']) {
+            if (this.teclas[tecla] && this.esMovimientoValido(tecla)) {
+                animacionDeseada = animaciones[tecla];
+                break; // Solo una animación debe ejecutarse
+            }
         }
 
-        // Posición de la luz
-        this.luz.x = this.sprite.x;
-        this.luz.y = this.sprite.y;
+        // Si no hay movimiento ni ataque, usar la animación "Idle"
+        if (!animacionDeseada) {
+            if (this.estadoAtacando) {
+                animacionDeseada = 'Ataca';  // Si está atacando, usa la animación de ataque
+            } else {
+                animacionDeseada = 'Idle';  // De lo contrario, la animación "Idle"
+            }
+        }
+
+        // Cambiar la animación si es necesario
+        if (this.animacionActual !== animacionDeseada) {
+            this.cargarSpriteAnimado("Assets/Player/texture.json", animacionDeseada); // Invoca el método de la clase padre
+        }
+
+        // Realizar el movimiento si no está en animación de ataque
+        if (animacionDeseada !== 'Ataca') {
+            if (animacionDeseada === 'CaminaArriba' && this.sprite.y > 0) {
+                this.sprite.y -= this.velocidad;
+            } else if (animacionDeseada === 'CaminaAbajo' && this.sprite.y < this.juego.app.renderer.height - this.sprite.height) {
+                this.sprite.y += this.velocidad;
+            } else if (animacionDeseada === 'CaminaIzq' && this.sprite.x > 0) {
+                this.sprite.x -= this.velocidad;
+            } else if (animacionDeseada === 'CaminaDer' && this.sprite.x < this.juego.app.renderer.width - this.sprite.width) {
+                this.sprite.x += this.velocidad;
+            }
+        }
+
+        // Actualizar posición de la luz si existe
+        if (this.luz) {
+            this.luz.x = this.sprite.x;
+            this.luz.y = this.sprite.y;
+        }
+    }
+    // Verificar si el movimiento es válido (dentro de los límites)
+    esMovimientoValido(tecla) {
+        if (tecla === 'w' && this.sprite.y > 0) return true;
+        if (tecla === 's' && this.sprite.y < this.juego.app.renderer.height) return true;
+        if (tecla === 'a' && this.sprite.x > 0) return true;
+        if (tecla === 'd' && this.sprite.x < this.juego.app.renderer.width) return true;
+        return false;
     }
 
    
 
     // Colision con otro 
-    verificarColision(circulo) {
-        const dx = circulo.x - this.sprite.x;
-        const dy = circulo.y - this.sprite.y;
+    verificarColision(objeto) {
+        const dx = objeto.x - this.sprite.x;
+        const dy = objeto.y - this.sprite.y;
         const distancia = Math.sqrt(dx * dx + dy * dy);
 
         if (distancia < 25 + 5) { // Radio del personaje + radio del círculo
@@ -137,6 +162,12 @@ class Personaje extends Objeto{
     }
     
     actualizar() {
+        if (!this.listo) return;
+
+        if (this.juego.contadorDeFrames % 4 == 1) {
+            this.manejarSprites();
+        }
+        this.calcularYAplicarFuerzas();
         super.actualizar();
     }
     
