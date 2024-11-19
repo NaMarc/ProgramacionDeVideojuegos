@@ -224,3 +224,42 @@ const juego = new Juego();
 window.addEventListener('resize', () => {
     juego.app.renderer.resize(window.innerWidth, window.innerHeight);
 });
+
+/**
+ *     this.gridActualizacionIntervalo = 10; // Cada 10 frames
+        this.contadorDeFrame = 0;
+
+
+        this.ponerListeners();
+
+        ponerListeners(){
+        window.addEventListener("resize", () => {
+            this.app.renderer.resize(window.innerWidth, window.innerHeight);
+        });
+    }
+    pausar() {
+        this.pausa = !this.pausa;
+    }
+
+ 
+    update() {
+        if (this.pausa) return;
+        this.contadorDeFrame++;
+
+        for (let objeto of this.objetos) {
+            objeto.actualizar();
+            // objeto.render();
+        }
+
+        //FALTABA HACERLE UPDATE AL PERSONAJE
+        this.personaje.actualizar()
+        // this.personaje.render()
+
+
+        for (let enemigo of this.enemigos) {
+            enemigo.actualizar();
+            // objeto.render();
+
+        }
+      
+ */

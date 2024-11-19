@@ -93,7 +93,7 @@ class GameOver extends Eventos {
 class Inicio extends Eventos{
     constructor(app, contenedor, personaje) {
         super(app, contenedor, personaje); 
-        this.crearTexto('Insectario \n Usa WASD para moverte \n B para prender la luz \n V para apagar \n F para atacar \n Busca el tesoro antes de \n que se termine el tiempo', 'black');
+        this.crearTexto('Insectario \n Usa WASD para moverte \n B para prender la luz \n V para apagar \n F para atacar \n Busca los 3 tesoros antes de \n que se termine el tiempo', 'black');
     }
 }
 
