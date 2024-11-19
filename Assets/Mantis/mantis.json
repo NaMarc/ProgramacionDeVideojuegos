@@ -395,7 +395,7 @@
   "meta": {
     "app": "http://free-tex-packer.com",
     "version": "0.6.7",
-    "image": "player_image.png",
+    "image": "mantis.png",
     "format": "RGBA8888",
     "size": {
       "w": 187,

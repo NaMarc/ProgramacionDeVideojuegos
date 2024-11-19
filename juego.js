@@ -1,62 +1,67 @@
 /*Anotaciones
- -Arreglar efecto rebote del personaje con obstaculos
 
- -Implementar assets / Cambiar imagenes por las definitivas
+ -Ajustar tiempo total del juego
 
- -Colisiones
-
- -Maquina de estados
-
- -Grid
-
- -Ajustar velocidades y numero de enemigos.
  */
 
 class Juego {
     constructor() {
         this.ancho = innerWidth * 2;
         this.alto = innerHeight * 2
+        this.lerpSpeed = 0.1; //camara
         this.app = new PIXI.Application({
             width: this.ancho,
             height: this.alto,
-            backgroundColor: 0x006400 
+            backgroundColor: 0x000000 
         });
+        
         document.body.appendChild(this.app.view);
 
         this.contenedor = new PIXI.Container();
         this.contenedor.name = "contendor"
         this.agregarFondo(); 
         this.app.stage.addChild(this.contenedor);
+        
         this.contenedor.sortableChildren = true;
 
-        this.contadorDeFrame = 0
+        this.contadorDeFrame = 0;
 
-        /*this.estadoFuncionando = false;*/
+        this.musica = new Howl({
+            src: ['mystic-forest.ogg'], // Asegúrate de usar la ruta correcta del archivo
+            autoplay: true,  // Reproducir automáticamente
+            loop: true,      // Repetir la música
+            volume: 0.2     // Establecer el volumen inicial
+        });
 
         this.grid = new Grid(this, 50);
 
         this.objetos = [];
         this.obstaculos = [];
-        this.enemigos = [];
+        this.enemigo = [];
+        this.mantis = [];
+        this.tesoro = [];
 
-        this.agregarObstaculo("arbol", 20);
-        this.agregarObstaculo("piedra", 10);
-        this.agregarObstaculo("arbusto", 5);
-        this.agregarEnemigos(50);
+        this.agregarObstaculo("arbol", 10);
+        this.agregarObstaculo("piedra", 5);
+        this.agregarObstaculo("arbusto", 10);
+        this.agregarTesoros("tesoro", 3);
+        this.agregarEnemigos(40);
+        this.agregarMantis(10);
 
-        //this.iniciarElementos();
-        //this.iniciarEventos();
+        this.iniciarElementos();
+        this.iniciarEventos(); 
         
-
         //
-        this.personaje = new Personaje(50, 50, this, this.elementos, this.eventos); 
-        //this.objetos.push(personaje);
-
-        //this.contenedor.addChild(this.personaje.sprite);
-        //this.contenedor.addChild(this.personaje.luz);
-
-
+        this.personaje = new Personaje(50, 50, this, this.elementos, this.eventos);
+        
         this.update();
+
+        this.inicio.mostrar();
+
+        setTimeout(() => {
+            this.inicio.quitar();
+        }, 3000);
+
         //this.app.ticker.add(() => this.update());
         setTimeout(() => {
             this.app.ticker.add(this.update.bind(this));
@@ -71,6 +76,7 @@ class Juego {
         this.contenedorFondo.addChild(this.fondoSprite);
         this.contenedor.addChild(this.contenedorFondo);
     }
+
     agregarObstaculo(tipo, cantidad) {
         if (tipo === "arbol") {
             for (let i = 0; i < cantidad; i++) {
@@ -93,7 +99,18 @@ class Juego {
                 this.objetos.push(arbusto);
             }
         }
+       
 
+    } 
+    
+    agregarTesoros(tipo, cantidad){
+        if (tipo === "tesoro") {
+            for (let i = 0; i < cantidad; i++) {
+                const tesoro = (new Tesoro(Math.random() * this.ancho, Math.random() * this.alto, this, "Assets/tesoro.png"));
+                this.tesoro.push(tesoro);
+                this.objetos.push(tesoro);
+            }
+        }
     }
 
     agregarEnemigos(cant) {
@@ -104,29 +121,40 @@ class Juego {
                 Math.random() * this.alto,
                // velocidad,
                 this
-            ); // Pasar la grid a los mosquitos
-            this.enemigos.push(mosquito);
+            ); 
+            this.enemigo.push(mosquito); 
             this.objetos.push(mosquito);
         }
     }
 
-    /*iniciarElementos(){
-        this.enemigos = new Enemigos(this.app, this.contenedor);
-        this.elementos = new Elementos(this.app, this.contenedor, this);
-        this.personaje = new Personaje(this.app, this.elementos, this.eventos); 
-        this.enemigosGrandes = new EnemigosGrandes(this.app, this.contenedor);
-    }*/
+    agregarMantis(cant) {
+        for (let i = 0; i < cant; i++) {
+           // let velocidad = Math.random() * 1.3 + 1.5;
+            const m = new Mantis(
+                Math.random() * this.ancho,
+                Math.random() * this.alto,
+               // velocidad,
+                this
+            ); 
+            this.mantis.push(m); 
+            this.objetos.push(m);
 
-    /*iniciarEventos(){
-        this.eventos = new Eventos(this.app, this.contenedor, this.personaje);
-        this.win = new Win(this.app, this.contenedor, this.personaje);
-        this.gameOver = new GameOver(this.app, this.contenedor, this.personaje);
-        
-
-
+        }
     }
 
-    //*
+        
+
+    iniciarElementos(){
+        this.elementos = new Elementos(this.app, this.contenedor, this); 
+    }
+
+    iniciarEventos(){
+        this.eventos = new Eventos(this.app, this.contenedor, this.personaje);
+        this.inicio = new Inicio(this.app, this.contenedor, this.personaje);
+        this.win = new Win(this.app, this.contenedor, this.personaje);
+        this.gameOver = new GameOver(this.app, this.contenedor, this.personaje);
+    }
+
     condicionDeVictoria(){
         if(this.elementos.temporizador && this.elementos.temporizador.tiempoAgotado){
             console.log('gano');
@@ -141,58 +169,54 @@ class Juego {
             this.gameOver.mostrar();
             this.app.ticker.stop();
         } 
-}
+    }
 
-    /*actualizarPosicionDelContenedor(){
-        
- 
-    }*/
-   
     update() {
+
         this.contadorDeFrame++;
 
         for (let objeto of this.objetos) {
             objeto.actualizar();
-            objeto.render();
-            
+            // objeto.render();    
         }
-
+        
+        //FALTABA HACERLE UPDATE AL PERSONAJE
+        this.personaje.actualizar()
+        // this.personaje.render()
+           
         this.personaje.mover();
+       
+        this.condicionDeDerrota();
+        this.condicionDeVictoria();
 
-        //this.enemigos.moverCirculos(this.personaje);
-        //this.enemigos.aumentarVisibilidad(this.personaje.luzActivada);
-        //this.enemigosGrandes.mover(this.personaje);
-
-        //this.condicionDeDerrota();
-        //this.condicionDeVictoria();
-
-        //this.actualizarPosicionDelContenedor();
-
-
-        // Verificar colisiones con obstáculos y círculos
-       /* this.obstaculos.forEach(obstaculo => {
-            if (obstaculo.verificarColision(this.personaje)) {
-                console.log("Colisión con obstáculo!");
-            }
-            obstaculo.reaccionarALuz(this.personaje.luzActivada);
-        });
-    
-        this.circulosGenerados.forEach(circulo => {
-            circulo.mover(this.personaje);
-            this.personaje.verificarColision(circulo);
-        });*/
-
-        //Actualizar la posición del contenedor para seguir al personaje
-        /*this.contenedor.x = -this.personaje.sprite.x + window.innerWidth / 2;
-        this.contenedor.y = -this.personaje.sprite.y + window.innerHeight / 2;
-        if (this.contenedor.x < 0) this.contenedor.x = 0;
-        if (this.contenedor.y < 0) this.contenedor.y = 0;*/
-
-
-
-    
+        this.actualizarCamara();    
     }
+
+    
+    actualizarCamara() {
+        // Posicion de la camara
+        const targetX = -this.personaje.contenedorObjeto.x + window.innerWidth / 2;
+        const targetY = -this.personaje.contenedorObjeto.y + window.innerHeight / 2;
+    
+        // LERP (suvizar movimiento de camara)
+        this.contenedor.x = lerp(this.contenedor.x, targetX, this.lerpSpeed);
+        this.contenedor.y = lerp(this.contenedor.y, targetY, this.lerpSpeed);
+    
+        // Bordes
+        if (this.contenedor.x > 0) this.contenedor.x = 0;
+        if (this.contenedor.y > 0) this.contenedor.y = 0;
+    
+        // Limitar el movimiento en el eje X e Y para que no salga de la escena
+        const maxX = Math.max(0, this.personaje.contenedorObjeto.x - window.innerWidth + this.personaje.contenedorObjeto.width);
+        const maxY = Math.max(0, this.personaje.contenedorObjeto.y - window.innerHeight + this.personaje.contenedorObjeto.height);
+    
+        if (this.contenedor.x < -maxX) this.contenedor.x = -maxX;
+        if (this.contenedor.y < -maxY) this.contenedor.y = -maxY;
+    }
+    
 }
+
+
 
 const juego = new Juego();
 

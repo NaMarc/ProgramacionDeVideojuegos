@@ -1,72 +1,134 @@
+
 class Personaje extends Objeto{
     constructor(x, y, juego, elementos, eventos) { 
         super(x, y, juego);
 
-        this.elementos = elementos; 
-        this.velocidadRebote = 10; 
+        this.elementos = elementos;  
         this.eventos = eventos; 
 
         this.vidas = 3;
         this.velocidad = 5;
 
         this.estadoAtacando = false;
-
+       
         this.teclas = {};
         this.luzActivada = false;
 
+        this.focusActivado = false;
+
         this.cargarSpriteAnimado("Assets/Player/texture.json", "Idle");
+        this.nuevaLuz();
 
-        /*this.sprite = new PIXI.Sprite(this.textura);
-        this.contenedorObjeto.addChild(this.sprite);
-        this.sprite.scale.set(4);
-        this.sprite.anchor.set(0.5, 1);*/
+        //this.agregarLuz();
        
-
-        //LUZ
-        this.luz = PIXI.Sprite.from('./Assets/luz.png'); //Modificar imagen
-        this.contenedorObjeto.addChild(this.luz);
-        this.luz.anchor.set(0.5);
-
-        this.luz.width = window.innerWidth;
-        this.luz.height = window.innerHeight;
-
-        this.luz.alpha = 0.15;
-
-        this.luz.visible = false;
-
-        
         this.setupInput();
         this.actualizar();
     }
 
-    setupInput() {
+    nuevaLuz() {
+        const radius = 300; 
+        const blurSize = 50; 
+    
+        //Circulo del blur
+        const circle = new PIXI.Graphics()
+            .beginFill(0xff0000)
+            .drawCircle(radius + blurSize, radius + blurSize, radius)
+            .endFill();
+    
+        // Filtro
+        circle.filters = [new PIXI.filters.BlurFilter(blurSize)];
+    
+        // Textura
+        const bounds = new PIXI.Rectangle(0, 0, (radius + blurSize) * 2, (radius + blurSize) * 2);
+        const texture = this.juego.app.renderer.generateTexture(circle, PIXI.SCALE_MODES.NEAREST, 1, bounds);
+        this.focus = new PIXI.Sprite(texture);
+    
+        // 
+        this.juego.contenedor.addChild(this.focus);
+        this.juego.contenedor.mask = this.focus;  
+    
+        // Posicion
+        this.focus.x = this.contenedorObjeto.x;
+        this.focus.y = this.contenedorObjeto.y;
+
+        //0 a 1
+        this.focus.alpha = 1;  
+
+        //  Eventos del teclado
+        this.juego.app.stage.interactive = true;  
+
+        // 
         window.addEventListener('keydown', (event) => {
-            
-            this.teclas[event.key] = true;
-            if (event.key === ' ') {
-                this.luzActivada = !this.luzActivada;
-                this.luz.visible = this.luzActivada;
-            }
-            if (event.key.toLowerCase() === 'f') { //**Cambiar 
-                console.log('atacando');
-                this.estadoAtacando = true;
+            if (event.key === 'v') {  
+                this.focus.alpha = 0.2;  
+                this.focusActivado = false;
+            } else if (event.key === 'b') {    
+                this.focus.alpha = 1;  
+                this.focusActivado = true;
             }
         });
 
-        window.addEventListener('keyup', (event) => {
-            this.teclas[event.key] = false;
 
-            if (event.key.toLowerCase() === 'f') {
+
+    }
+    
+
+    /*agregarLuz(){
+        this.luz = PIXI.Sprite.from('./Assets/luz3232.png'); 
+        this.contenedorObjeto.addChild(this.luz);
+        this.luz.anchor.set(0.5, 1);
+        this.luz.scale.set(4);
+
+        this.luz.alpha = 0.5;
+
+        this.luz.visible = false;
+    }*/
+
+    /*actualizarLuz(){
+        if (this.luz) {
+            this.luz.x = this.contenedorObjeto.x;
+            this.luz.y = this.contenedorObjeto.y;
+    }}*/
+    
+ 
+    setupInput() {
+        // minusculas
+        window.addEventListener('keydown', (event) => {
+            const tecla = event.key.toLowerCase(); 
+            this.teclas[tecla] = true; 
+        
+            // barra para luz
+           /* if (tecla === ' ') {
+                //this.luzActivada = !this.luzActivada;
+                //this.luz.visible = this.luzActivada;
+
+                this.focusActivado = !this.focusActivado;
+                this.focus.visible = this.focusActivado;
+            }*/
+        
+            // f para ataque
+            if (tecla === 'f') {
+                this.estadoAtacando = true;
+            }
+        });
+        
+        window.addEventListener('keyup', (event) => {
+            const tecla = event.key.toLowerCase(); // mins
+            this.teclas[tecla] = false; 
+        
+            //
+            if (tecla === 'f') {
                 this.estadoAtacando = false;
             }
         });
     }
+        
 
     
     mover() {
-        if (!this.spriteCargado) return;  // Si el sprite no está cargado, no hacemos nada
+        if (!this.spriteCargado) return;  // No hace nada si el sprite no esta cargado
 
-        // Definir las animaciones y teclas asociadas
+        // Animaciones y teclas
         const animaciones = {
             'w': 'CaminaArriba',
             's': 'CaminaAbajo',
@@ -101,76 +163,51 @@ class Personaje extends Objeto{
 
         // Realizar el movimiento si no está en animación de ataque
         if (animacionDeseada !== 'Ataca') {
-            if (animacionDeseada === 'CaminaArriba' && this.sprite.y > 0) {
-                this.sprite.y -= this.velocidad;
-            } else if (animacionDeseada === 'CaminaAbajo' && this.sprite.y < this.juego.app.renderer.height - this.sprite.height) {
-                this.sprite.y += this.velocidad;
-            } else if (animacionDeseada === 'CaminaIzq' && this.sprite.x > 0) {
-                this.sprite.x -= this.velocidad;
-            } else if (animacionDeseada === 'CaminaDer' && this.sprite.x < this.juego.app.renderer.width - this.sprite.width) {
-                this.sprite.x += this.velocidad;
+            if (animacionDeseada === 'CaminaArriba' && this.contenedorObjeto.y > 0) {
+                this.contenedorObjeto.y -= this.velocidad;
+            } else if (animacionDeseada === 'CaminaAbajo' && this.contenedorObjeto.y < this.juego.app.renderer.height - this.sprite.height) {
+                this.contenedorObjeto.y += this.velocidad;
+            } else if (animacionDeseada === 'CaminaIzq' && this.contenedorObjeto.x > 0) {
+                this.contenedorObjeto.x -= this.velocidad;
+            } else if (animacionDeseada === 'CaminaDer' && this.contenedorObjeto.x < this.juego.app.renderer.width - this.sprite.width) {
+                this.contenedorObjeto.x += this.velocidad;
             }
         }
 
-        // Actualizar posición de la luz si existe
-        if (this.luz) {
-            this.luz.x = this.sprite.x;
-            this.luz.y = this.sprite.y;
-        }
+        // Posicion de la luz
+        /*if (this.luz) {
+            this.luz.x = this.contenedorObjeto.x;
+            this.luz.y = this.contenedorObjeto.y;
+        }*/
     }
     // Verificar si el movimiento es válido (dentro de los límites)
     esMovimientoValido(tecla) {
-        if (tecla === 'w' && this.sprite.y > 0) return true;
-        if (tecla === 's' && this.sprite.y < this.juego.app.renderer.height) return true;
-        if (tecla === 'a' && this.sprite.x > 0) return true;
-        if (tecla === 'd' && this.sprite.x < this.juego.app.renderer.width) return true;
+        if (tecla === 'w' && this.contenedorObjeto.y > 0) return true;
+        if (tecla === 's' && this.contenedorObjeto.y < this.juego.app.renderer.height) return true;
+        if (tecla === 'a' && this.contenedorObjeto.x > 0) return true;
+        if (tecla === 'd' && this.contenedorObjeto.x < this.juego.app.renderer.width) return true;
         return false;
     }
 
    
-
-    // Colision con otro 
-    verificarColision(objeto) {
-        const dx = objeto.x - this.sprite.x;
-        const dy = objeto.y - this.sprite.y;
-        const distancia = Math.sqrt(dx * dx + dy * dy);
-
-        if (distancia < 25 + 5) { // Radio del personaje + radio del círculo
-            this.rebotar(dx, dy); 
-            return true;
-        }
-        return false;
-    }
-
-     //Método para rebotar 
-    rebotar(dx, dy) {
-        const distancia = Math.sqrt(dx * dx + dy * dy);
-        const normalX = dx / distancia;
-        const normalY = dy / distancia;
-    
-        // Desplazamiento progresivo
-        this.sprite.x += normalX * this.velocidadRebote;
-        this.sprite.y += normalY * this.velocidadRebote;
-    
-        // Reducir la velocidad de rebote
-        this.velocidadRebote *= 0.9;
-    
-        // Evitar que la velocidad de rebote se haga demasiado pequeña
-        if (this.velocidadRebote < 0.1) {
-            this.velocidadRebote = 0;
-        }
-    }
-    
     actualizar() {
-        if (!this.listo) return;
+        // if (!this.listo) return;
 
-        if (this.juego.contadorDeFrames % 4 == 1) {
-            this.manejarSprites();
+         if (this.juego.contadorDeFrames % 4 == 1) {
+           //this.actualizarNuevaLuz(); 
+           this.actualizarLuz(); //Posicion 
+            
         }
-        this.calcularYAplicarFuerzas();
-        super.actualizar();
+        //Actualiza la luz nueva
+        if (this.focus) {
+            this.focus.x = this.contenedorObjeto.x - this.focus.width / 2;  
+            this.focus.y = this.contenedorObjeto.y - this.focus.height / 2;  
+        }
+        //this.calcularYAplicarFuerzas();
+        
+        super.actualizar();    
     }
-    
+
 
     // VIDAS
    updateVidas() {
@@ -186,6 +223,7 @@ class Personaje extends Objeto{
         }
    }
 }
+
 
 
 

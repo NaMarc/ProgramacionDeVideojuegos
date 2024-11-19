@@ -1,4 +1,3 @@
-
 const caracteres = "123456789abcdefghijklmnopqrstuvwxyz";
 function randomID(longitud) {
     let id = "";
@@ -7,4 +6,8 @@ function randomID(longitud) {
         id += caracteres[idRandom];
     }
     return id;
+}
+
+function lerp(start, end, t) {
+    return start + (end - start) * t;
 }

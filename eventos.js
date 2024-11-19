@@ -1,3 +1,4 @@
+/** */
 class Eventos {
     constructor(app, contenedor, personaje) {
         this.app = app;
@@ -13,7 +14,7 @@ class Eventos {
     crearTexto( texto, color) {
         const estiloTexto = new PIXI.TextStyle({
             fontFamily: 'Tiny5',
-            fontSize: 90,
+            fontSize: 80,
             fill: color,
             align: 'center'
         });
@@ -30,7 +31,7 @@ class Eventos {
         if (!this.mensajeMostrado) {
             this.crearRectangulo(); 
 
-            this.contenedor.addChild(this.textoPixi);
+            this.app.stage.addChild(this.textoPixi);
 
             this.textoPixi.visible = true;
 
@@ -40,16 +41,21 @@ class Eventos {
                 this.actualizarPosicion();
                 this.actualizarPosicionDelRec();
             })
-
         }
-    
+    }
+
+    quitar(){
+            this.app.stage.removeChild(this.textoPixi);
+            this.app.stage.removeChild(this.rectangulo);
+            this.mensajeMostrado = false; 
+        
     }
 
     actualizarPosicion(){
         this.textoPixi.anchor.set(0.5, 0.5);
 
-        this.textoPixi.x = this.personaje.posicionActualEnX(); 
-        this.textoPixi.y = this.personaje.posicionActualEnY(); 
+        this.textoPixi.x =  this.app.view.width / 4;
+        this.textoPixi.y = this.app.view.height / 4; 
     }
 
 
@@ -57,10 +63,10 @@ class Eventos {
         this.rectangulo = new PIXI.Graphics();
         this.rectangulo.beginFill(0xFFFF99, 0.5);
         this.rectangulo.drawRect(-this.textoPixi.width / 2 - 10, -this.textoPixi.height / 2 - 10, 
-            this.textoPixi.width + 20, this.textoPixi.height + 20);
+        this.textoPixi.width + 20, this.textoPixi.height + 20);
         this.rectangulo.endFill();
 
-        this.contenedor.addChild(this.rectangulo);
+        this.app.stage.addChild(this.rectangulo);
         this.textoPixi.anchor.set(0.5 , 0.5);
     }
 
@@ -69,6 +75,7 @@ class Eventos {
         this.rectangulo.y = this.textoPixi.y;
     }
 }
+
 class Win extends Eventos {
     constructor(app, contenedor, personaje) {
         super(app, contenedor, personaje); 
@@ -80,6 +87,13 @@ class GameOver extends Eventos {
     constructor(app, contenedor, personaje) {
         super(app, contenedor, personaje); 
         this.crearTexto('GAME OVER', 'red');
+    }
+}
+
+class Inicio extends Eventos{
+    constructor(app, contenedor, personaje) {
+        super(app, contenedor, personaje); 
+        this.crearTexto('Insectario \n Usa WASD para moverte \n B para prender la luz \n V para apagar \n F para atacar \n Busca el tesoro antes de \n que se termine el tiempo', 'black');
     }
 }
 

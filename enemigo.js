@@ -1,93 +1,27 @@
-class Enemigo extends Objeto{
-    constructor(x, y ,juego) {
+//Moscas
+
+class Enemigo extends Objeto {
+    constructor(x, y, juego) {
         super(x, y, juego);
+        this.juego = juego;
+        this.grid = juego.grid;
         
-        /*this.gruposCirculos = [];
-        this.numCirculosPorGrupo = 2;
-        this.numGrupos = 5;
-        this.radio = 5;
-        this.velocidadCirculos = 0.25;
+        // Estados del enemigo
+        this.estados = { IDLE: 0, ATACAR: 1 };
+        this.estado = this.estados.IDLE;
 
-        //this.crearGrupos();*/
-        
-        //this.cargarSpriteAnimado("Assets/Moscas/texture.json", "Idle");
-    }
-    cargarSprite(){
-        this.textura = PIXI.Texture.from("Assets/moscaprueba.png");
-        this.sprite = new PIXI.Sprite(this.textura);
-        this.contenedorObjeto.addChild(this.sprite);
-        this.sprite.scale.set(0.15);
-        this.sprite.alpha = 0.15;
-
+        //var animacion
+        this.animacion = this.cargarSpriteAnimado("Assets/Moscas/moscas.json", "CaminaAbajo");
+       
     }
 
-    /*crearGrupos() {
-        const colores = [0xFFA500, 0xFF0000, 0x008000];
-        colores.forEach(color => {
-            for (let i = 0; i < this.numGrupos; i++) {
-                this.crearGrupoCirculos(color);
-            }
-        });
-    }
+  
+ 
 
-    crearGrupoCirculos(color) {
-        //const grupo = new PIXI.Container();
-        for (let i = 0; i < this.numCirculosPorGrupo; i++) {
-            const circulo = new PIXI.Graphics();
-            circulo.beginFill(color);
-            circulo.alpha = 0.15;
-            circulo.drawCircle(0, 0, this.radio);
-            circulo.endFill();
-            circulo.x = Math.random() * this.juego.app.renderer.width;
-            circulo.y = Math.random() * this.juego.app.renderer.height;
-            circulo.colisionado = false;
-            grupo.addChild(circulo);
-        }
-        this.gruposCirculos.push(grupo);
-        this.contenedor.addChild(this.contenedorObjeto);
-    }*/
+ actualizar(){
+  super.actualizar();
+ }
 
-    aumentarVisibilidad(luzActivada) {
-        const nuevaAlpha = luzActivada ? 1 : 0.15;
-        this.sprite.alpha = nuevaAlpha;
-    }
+   
 
-    moverCirculos(personaje) {
-        this.gruposCirculos.forEach(grupo => {
-            grupo.children.forEach(circulo => {
-                const dx = personaje.sprite.x - circulo.x;
-                const dy = personaje.sprite.y - circulo.y;
-                const distancia = Math.sqrt(dx * dx + dy * dy);
-
-                if (distancia > 0 && !objeto.colisionado) { // Solo mover si no ha colisionado
-                    const dirX = (dx / distancia) * this.velocidadCirculos;
-                    const dirY = (dy / distancia) * this.velocidadCirculos;
-
-                    circulo.x += dirX;
-                    circulo.y += dirY;
-
-                    // Verificar colisión con el personaje
-                    if (distancia < this.radio + 25 ) { //Radio del personaje
-                        personaje.updateVidas(); 
-                        circulo.colisionado = true; 
-                        console.log(`Colisióna. Vidas restantes del personaje: ${personaje.vidas}`);
-                        this.eliminarCirculo(circulo, grupo); 
-                    }
-                }
-            });
-        });
-    }
-    
-    eliminarCirculo(circulo, grupo) {
-        grupo.removeChild(circulo); 
-        const index = grupo.children.indexOf(circulo);
-        if (index > -1) {
-            grupo.children.splice(index, 1); // Elimina del array de hijos
-        }
-    }
-}
-    
-
-
-
-
+  }

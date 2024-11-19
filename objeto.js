@@ -1,4 +1,4 @@
-//Todavia no implementar
+
 
 class Objeto{
     constructor(x, y, juego){
@@ -6,13 +6,14 @@ class Objeto{
         this.contenedorObjeto = new PIXI.Container();
         this.contenedorObjeto.name = "contenedorObjeto"
         this.juego.contenedor.addChild(this.contenedorObjeto);
+        
 
         
         
         this.id = randomID(8);
 
-        this.x = x;
-        this.y = y;
+        this.contenedorObjeto.x = x;
+        this.contenedorObjeto.y = y;
         this.velocidad = { x: 0, y: 0 };
         this.acc = { x: 0, y: 0 };
 
@@ -20,8 +21,11 @@ class Objeto{
         this.animacionActual = ""; // Para controlar la animación actual
         this.texturasCargadas = {}; // Para almacenar las texturas de las animaciones
         this.objetosVecinos();
+
+
     }
 
+//ANIMACION
     async cargarSpriteAnimado(jsonPath, animName) {
         if (this.animacionActual === animName) return; // Evitar recargar la misma animación
 
@@ -39,11 +43,14 @@ class Objeto{
             } else {
                 this.sprite = new PIXI.AnimatedSprite(this.texturasCargadas[jsonPath][animName]);
                 this.sprite.animationSpeed = 0.1;
-                this.sprite.loop = true; // Por defecto las animaciones son cíclicas
+                this.sprite.loop = true; 
                 this.sprite.play();
+
                 this.contenedorObjeto.addChild(this.sprite);
-                this.sprite.anchor.set(0.5, 1);
-                this.sprite.scale.set(4);
+
+                this.sprite.anchor.set(0.5, 1); // Ajustamos el anclaje a la parte inferior del sprite
+                this.sprite.scale.set(4); // Escala del sprite
+    
             }
 
             // Actualizar el estado de la animación actual
@@ -54,24 +61,35 @@ class Objeto{
             console.error('Error al cargar la animación:', error);
         }
     }
-    objetosVecinos() {
-        let vecinos = [];
-        const tamanioCelda = this.juego.grid.tamanioCelda;
-        const xIndex = Math.floor(this.juego.contenedor.x / tamanioCelda);
-        const yIndex = Math.floor(this.juego.contenedor.y / tamanioCelda);
-        const margen = 1;
-        // Revisar celdas adyacentes
-        for (let i = this.x - margen; i <= this.x + margen; i++) {
-            for (let j = this.y - margen; j <= this.y + margen; j++) {
-                const celda = this.juego.grid.getCelda(xIndex + i, yIndex + j);
 
-                if (celda) {
-                vecinos = [celda.objetosAca]
-                }   
+
+
+       objetosVecinos() {
+            let vecinos = [];
+            const tamanioCelda = this.juego.grid.tamanioCelda;
+        
+            const globalPosition = this.contenedorObjeto.getGlobalPosition();
+            const xIndex = Math.floor(globalPosition.x / tamanioCelda);
+            const yIndex = Math.floor(globalPosition.y / tamanioCelda);
+            const margen = 1;
+        
+            // Revisar celdas adyacentes
+            for (let i = -margen; i <= margen; i++) {
+                for (let j = -margen; j <= margen; j++) {
+                    const vecinoCelda = this.juego.grid.getCelda(xIndex + i, yIndex + j);
+        
+                    if (vecinoCelda) {
+                            vecinos.push(vecinoCelda.objetosAca);
+                        }
+                    }
             }
+        
+            return vecinos;
         }
-        return vecinos;
-    }
+        
+        
+
+
     ajustarPorBordes() {
         let fuerza = new PIXI.Point(0, 0);
 
@@ -88,34 +106,39 @@ class Objeto{
         if (this.contenedorObjeto.x > limiteDerecho) fuerza.x = -cuantaFuerza;
         if (this.contenedorObjeto.y > limiteAbajo) fuerza.y = -cuantaFuerza;
 
-        // if(this.debug)console.log(fuerza)
         return fuerza;
     }
 
 
     actualizarPosicionEnGrid(){
        this.juego.grid.update(this);
-
     }
 
     
     actualizarZIndex() {
         this.contenedorObjeto.zIndex = Math.floor(this.contenedorObjeto.y);
     }
+
     actualizar(){
         //his.container.x += this.velocidad.x;
         //this.container.y += this.velocidad.y;
+        // debugger
         this.actualizarPosicionEnGrid();
+
+
+        // if(this instanceof Obstaculo){
+        //     debugger
+        // }
 
         this.actualizarZIndex();
         //this.actualizarLado();
     }
 
-    render() {
-        //this.contenedorObjeto.rotation = this.angulo;
-        this.contenedorObjeto.x = this.x;
-        this.contenedorObjeto.y = this.y;
-    }
+    // render() {
+    //     //this.contenedorObjeto.rotation = this.angulo;
+    //     this.contenedorObjeto.x = this.x;
+    //     this.contenedorObjeto.y = this.y;
+    // }
 
 
 }

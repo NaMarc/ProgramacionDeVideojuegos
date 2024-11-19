@@ -1,14 +1,29 @@
+/**- */
 class Celda{
-    constructor(x, y, juego, tamanioCelda){
+    constructor(x, y, juego/*, tamanioCelda*/){
         this.x = x;
         this.y = y;
         this.juego = juego;
-        this.tamanioCelda = tamanioCelda;
+        //this.tamanioCelda = tamanioCelda;
         
         this.objetosAca= {};
 
     }
-    /*getCeldaClave(x, y) {
+   
+
+    agregar(objeto){
+        this.objetosAca[objeto.id] = objeto;
+        objeto.miCeldaActual = this;
+    }
+
+    sacar(objeto) {
+        objeto.miCeldaActual = null;
+        delete this.objetosAca[objeto.id];
+    }
+  
+    
+
+} /*getCeldaClave(x, y) {
         const xIndex = Math.floor(x / this.tamanioCelda);
         const yIndex = Math.floor(y / this.tamanioCelda);
         this.clave = [xIndex][yIndex];
@@ -16,14 +31,8 @@ class Celda{
         //let newx = Math.max(0, Math.min(this.celdasAncho - 1, xIndex));
        // let newy = Math.max(0, Math.min(this.celdasAlto - 1, yIndex));
         //return '${xIndex}, ${yIndex}';
-    }*/
-
-    agregar(objeto){
-        this.objetosAca[objeto.id] = objeto;
-        objeto.miCeldaActual = this;
-    }
-
-    obtenerCeldasVecinas() {
+    }*
+        / /* obtenerCeldasVecinas() {
         let vecinos = [];
 
         const margen = 1;
@@ -38,12 +47,4 @@ class Celda{
             }
         }
         return vecinos;
-    }
-
-    sacar(objeto) {
-        objeto.miCeldaActual = null;
-        delete this.objetosAca[objeto.id];
-    }
-    
-
-}
+    }*/
