@@ -22,12 +22,12 @@ class Personaje extends Objeto{
         //this.agregarLuz();
        
         this.setupInput();
-        this.actualizar();
+        //this.actualizar();
     }
 
     nuevaLuz() {
-        const radius = 300; 
-        const blurSize = 50; 
+        const radius = 400; 
+        const blurSize = 10; 
     
         //Circulo del blur
         const circle = new PIXI.Graphics()
@@ -57,38 +57,32 @@ class Personaje extends Objeto{
         //  Eventos del teclado
         this.juego.app.stage.interactive = true;  
 
-        // 
         window.addEventListener('keydown', (event) => {
-            if (event.key === 'v') {  
-                this.focus.alpha = 0.2;  
-                this.focusActivado = false;
-            } else if (event.key === 'b') {    
-                this.focus.alpha = 1;  
-                this.focusActivado = true;
+            if (event.key === ' ') {  
+                this.focusActivado = !this.focusActivado;  
+                this.focus.alpha = this.focusActivado ? 1 : 0.2;
             }
         });
-
-
 
     }
     
 
-    /*agregarLuz(){
-        this.luz = PIXI.Sprite.from('./Assets/luz3232.png'); 
+    agregarLuz(){
+        this.luz = PIXI.Sprite.from('./Assets/luz3232.png'); //cambiar imagen
         this.contenedorObjeto.addChild(this.luz);
         this.luz.anchor.set(0.5, 1);
         this.luz.scale.set(4);
 
         this.luz.alpha = 0.5;
 
-        this.luz.visible = false;
-    }*/
+        this.luz.visible = true;
+    }
 
-    /*actualizarLuz(){
+    actualizarLuz(){
         if (this.luz) {
             this.luz.x = this.contenedorObjeto.x;
             this.luz.y = this.contenedorObjeto.y;
-    }}*/
+    }}
     
  
     setupInput() {
@@ -96,15 +90,6 @@ class Personaje extends Objeto{
         window.addEventListener('keydown', (event) => {
             const tecla = event.key.toLowerCase(); 
             this.teclas[tecla] = true; 
-        
-            // barra para luz
-           /* if (tecla === ' ') {
-                //this.luzActivada = !this.luzActivada;
-                //this.luz.visible = this.luzActivada;
-
-                this.focusActivado = !this.focusActivado;
-                this.focus.visible = this.focusActivado;
-            }*/
         
             // f para ataque
             if (tecla === 'f') {
@@ -173,13 +158,8 @@ class Personaje extends Objeto{
                 this.contenedorObjeto.x += this.velocidad;
             }
         }
-
-        // Posicion de la luz
-        /*if (this.luz) {
-            this.luz.x = this.contenedorObjeto.x;
-            this.luz.y = this.contenedorObjeto.y;
-        }*/
     }
+
     // Verificar si el movimiento es válido (dentro de los límites)
     esMovimientoValido(tecla) {
         if (tecla === 'w' && this.contenedorObjeto.y > 0) return true;
@@ -192,11 +172,10 @@ class Personaje extends Objeto{
    
     actualizar() {
         // if (!this.listo) return;
+        this.mover();
 
-         if (this.juego.contadorDeFrames % 4 == 1) {
-           //this.actualizarNuevaLuz(); 
-           this.actualizarLuz(); //Posicion 
-            
+        if (this.juego.contadorDeFrames % 4 == 1) {
+           this.actualizarLuz(); //Posicion     
         }
         //Actualiza la luz nueva
         if (this.focus) {

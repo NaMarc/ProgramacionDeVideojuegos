@@ -7,7 +7,7 @@ class Elementos {
         this.juego = juego;
         
         this.barraDeVida = new BarraDeVida(this.app, 300, 20);
-        this.temporizador = new Temporalizador(this.app, ( this.app.view.width / 2 -80), 80, 60, this.juego); /**Cambiar tiempo inicial a 180 */
+        this.temporizador = new Temporalizador(this.app, 1090, 80, 60, this.juego); /**Cambiar tiempo inicial a 180 */
        // this.contador = new Contador(this.app, 990, 80 ); //Quitar? Contador de bichos muertos
         this.indicadorDeLuz = new IndicadorDeLuz(this.app, 105, 65 );
     }
@@ -101,6 +101,7 @@ class Temporalizador {
         
         this.app.stage.addChild(circuloTimer); 
     }
+
 }
 
 
