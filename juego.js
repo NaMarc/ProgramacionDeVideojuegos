@@ -13,7 +13,7 @@ class Juego {
         this.app = new PIXI.Application({
             width: this.canvasWidth,
             height: this.canvasHeight,
-            resizeTo: window,
+            //resizeTo: window,
             backgroundColor: 0x000000  
         });
         

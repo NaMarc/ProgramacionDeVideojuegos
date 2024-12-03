@@ -17,16 +17,16 @@ class Personaje extends Objeto{
         this.focusActivado = false;
 
         this.cargarSpriteAnimado("Assets/Player/texture.json", "Idle");
-        this.nuevaLuz();
+        this.nuevaLuz(); //filtro
 
-        //this.agregarLuz();
+        this.agregarLuz(); //imagen
        
         this.setupInput();
         //this.actualizar();
     }
 
     nuevaLuz() {
-        const radius = 400; 
+        const radius = 500; 
         const blurSize = 10; 
     
         //Circulo del blur
@@ -61,6 +61,9 @@ class Personaje extends Objeto{
             if (event.key === ' ') {  
                 this.focusActivado = !this.focusActivado;  
                 this.focus.alpha = this.focusActivado ? 1 : 0.2;
+            
+                this.luzActivada = !this.luzActivada;  
+                this.luz.alpha = this.luzActivada ? 0.5 : 0.1;
             }
         });
 
@@ -68,9 +71,9 @@ class Personaje extends Objeto{
     
 
     agregarLuz(){
-        this.luz = PIXI.Sprite.from('./Assets/luz3232.png'); //cambiar imagen
+        this.luz = PIXI.Sprite.from('./Assets/luz108.png'); //cambiar imagen
         this.contenedorObjeto.addChild(this.luz);
-        this.luz.anchor.set(0.5, 1);
+        this.luz.anchor.set(0.5);
         this.luz.scale.set(4);
 
         this.luz.alpha = 0.5;
