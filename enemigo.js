@@ -2,14 +2,16 @@
 
 class Enemigo extends Objeto {
     constructor(x, y, velMax, juego) {
-        super(x, y, juego);
+        super(x, y,velMax, juego);
+        this.VelMaxOriginal = velMax;
+        this.velMaxEnModoHuir = velMax * 2;
         this.juego = juego;
         this.grid = juego.grid;
         this.listo = false;
 
         this.VelMaxOriginal = velMax;
         this.velMaxEnModoHuir = velMax * 2;
-        this.equipoParaUpdate = Math.floor(Math.random() * 9) + 1;
+        //this.equipoParaUpdate = Math.floor(Math.random() * 9) + 1;
         
         this.velocidad = new PIXI.Point(0.005 , 0.005);
         this.velMax= velMax;
@@ -20,15 +22,14 @@ class Enemigo extends Objeto {
         this.estados = { IDLE: 0, ATACAR: 1 };
         this.estado = this.estados.IDLE;
 
-       
-       //var animacion
-       this.animacion = this.cargarSpriteAnimado("Assets/Moscas/moscas.json", "CaminaAbajo");
+        //var animacion
+        this.animacion = this.cargarSpriteAnimado("Assets/Moscas/moscas.json", "CaminaAbajo");
        
     }
   
     mirarAlrededor() {
         this.vecinos = this.obtenerVecinos();
-       // this.celdasVecinas = this.miCeldaActual.obtenerCeldasVecinas();
+        //this.celdasVecinas = this.miCeldaActual.obtenerCeldasVecinas();
         this.estoyViendoAlPlayer = this.evaluarSiEstoyViendoAlPlayer();
     }
 
@@ -41,7 +42,7 @@ class Enemigo extends Objeto {
           vecRepulsionAObstaculos;
     
         let sumaDeVectores = new PIXI.Point(0, 0);
-    
+      
         //CALCULO LA FUERZA Q TRAE AL PERSONAJE PADENTRO DE LA PANTALLA DE NUEVO
         bordes = this.ajustarPorBordes();
     
@@ -57,6 +58,7 @@ class Enemigo extends Objeto {
         }
     
         vecRepulsionAObstaculos = this.repelerObstaculos(this.vecinos);
+        
         vecSeparacion = this.separacion(this.vecinos);
     
         //SUMO LOS VECTORES ANTES DE APLICARLOS
@@ -65,7 +67,7 @@ class Enemigo extends Objeto {
         sumaDeVectores.x += (vecCohesion || {}).x || 0;
         sumaDeVectores.x += (vecAtraccionAlPlayer || {}).x || 0;
         sumaDeVectores.x += (bordes || {}).x || 0;
-        sumaDeVectores.x += (vecRepulsionAObstaculos || {}).x || 0;
+        sumaDeVectores.x += (vecRepulsionAObstaculos || {}).x || 0; 
     
         sumaDeVectores.y += (vecSeparacion || {}).y || 0;
         sumaDeVectores.y += (vecAlineacion || {}).y || 0;
@@ -73,31 +75,34 @@ class Enemigo extends Objeto {
         sumaDeVectores.y += (vecAtraccionAlPlayer || {}).y || 0;
         sumaDeVectores.y += (bordes || {}).y || 0;
         sumaDeVectores.y += (vecRepulsionAObstaculos || {}).y || 0;
+
+        //console.log("VecRepulsionAObstaculos: ", vecRepulsionAObstaculos);
     
         this.aplicarFuerza(sumaDeVectores);
       }
 
-      actualizar() { 
-        this.vecinos = this.obtenerVecinos();
-        this.ajustarPorBordes();
-        //if (!this.listo) return;
-        
-       // if (this.juego.contadorDeFrames % this.equipoParaUpdate == 0) {
+    actualizar() { 
+      
+      //this.ajustarPorBordes();
+
+      //if (!this.listo) return;
+
+      // if (this.juego.contadorDeFrames % this.equipoParaUpdate == 0) {
           this.mirarAlrededor();
           this.segunDatosCambiarDeEstado();
           this.hacerCosasSegunEstado();
-          
-        //}
+           
+      //}
     
-        if ((this.juego.contadorDeFrames + this.equipoParaUpdate) % 4 == 1) {
+        //if ((this.juego.contadorDeFrames /*+ this.equipoParaUpdate*/) % 4 == 1) {
           //CADA 4 FRAME
-          //this.calcularAngulo();
+          this.calcularAngulo();
           //this.contenedorObjeto.rotation = this.angulo;
-          //this.ajustarSpriteSegunAngulo();
-        }
+          this.ajustarSpriteSegunAngulo();
+       // }
     
-        this.contenedorObjeto.x += this.velocidad.x;
-        this.contenedorObjeto.y += this.velocidad.y;
+      this.contenedorObjeto.x += this.velocidad.x;
+      this.contenedorObjeto.y += this.velocidad.y;
     
         if (Math.abs(this.velocidad.x) < 0.2 && Math.abs(this.velocidad.y) < 0.2) {
           this.velocidad.x = 0;
@@ -112,21 +117,20 @@ class Enemigo extends Objeto {
     
         //this.angulo = Math.atan2(this.velocidad.y, this.velocidad.x);
     
-        //this.evadirObstaculos();
-    
         super.actualizar();
       }
-    /*ajustarSpriteSegunAngulo() {
-    if (this.angulo > 315 || this.angulo < 45) {
-      this.cambiarSprite("correrLado");
-    } else if (this.angulo > 135 && this.angulo < 225) {
-      this.cambiarSprite("correrLado");
-    } else if (this.angulo > 45 && this.angulo < 135) {
-      this.cambiarSprite("correrArriba");
-    } else if (this.angulo > 225 && this.angulo < 315) {
-      this.cambiarSprite("correrAbajo");
+
+    ajustarSpriteSegunAngulo() {
+      if (this.angulo > 315 || this.angulo < 45) {
+        this.animacion = this.cargarSpriteAnimado("Assets/Moscas/moscas.json", "CaminaDer");
+      } else if (this.angulo > 135 && this.angulo < 225) {
+        this.animacion = this.cargarSpriteAnimado("Assets/Moscas/moscas.json", "CaminaIzq");
+      } else if (this.angulo > 45 && this.angulo < 135) {
+        this.animacion = this.cargarSpriteAnimado("Assets/Moscas/moscas.json", "CaminaArriba");
+      } else if (this.angulo > 225 && this.angulo < 315) {
+        this.animacion = this.cargarSpriteAnimado("Assets/Moscas/moscas.json", "CaminaAbajo");
+      }
     }
-  }*/
 
     calcularAngulo() {
         this.angulo = (radians_to_degrees(Math.atan2(this.velocidad.x, this.velocidad.y)) - 90 + 360) % 360;
@@ -134,68 +138,67 @@ class Enemigo extends Objeto {
     }
 
     segunDatosCambiarDeEstado() {
-        if (this.estoyViendoAlPlayer) {
-          this.estado = this.estados.ATACAR;
-        } else {
-          this.estado = this.estados.IDLE;
-        }
+      if (this.estoyViendoAlPlayer && this.juego.personaje.luzActivada) {
+        this.estado = this.estados.ATACAR;
+      } else {
+        this.estado = this.estados.IDLE;
       }
+    }
 
-      evaluarSiEstoyViendoAlPlayer() {
-        const distanciaCuadrada = distanciaAlCuadrado(
-          this.contenedorObjeto.x,
-          this.contenedorObjeto.y,
-          this.juego.personaje.contenedorObjeto.x,
-          this.juego.personaje.contenedorObjeto.y
-        );
+    evaluarSiEstoyViendoAlPlayer() {
+      const distanciaCuadrada = distanciaAlCuadrado(
+        this.contenedorObjeto.x,
+        this.contenedorObjeto.y,
+        this.juego.personaje.contenedorObjeto.x,
+        this.juego.personaje.contenedorObjeto.y
+      );
     
-        if (distanciaCuadrada < this.vision ** 2) {
-          return true;
-        }
+      if(distanciaCuadrada < this.vision ** 2) {
+        return true;
+      }
         return false;
-      }
+    }
 
-      perseguirPlayer() {
-        const vecDistancia = new PIXI.Point(
-          this.juego.personaje.contenedorObjeto.x - this.contenedorObjeto.x,
-          this.juego.personaje.contenedorObjeto.y - this.contenedorObjeto.y
-        );
+    perseguirPlayer() {
+      const vecDistancia = new PIXI.Point(
+        this.juego.personaje.contenedorObjeto.x - this.contenedorObjeto.x,
+        this.juego.personaje.contenedorObjeto.y - this.contenedorObjeto.y
+      );
     
-        // let vecNormalizado = normalizarVector(vecDistancia.x, vecDistancia.y);
+      // let vecNormalizado = normalizarVector(vecDistancia.x, vecDistancia.y);
     
-        let distCuadrada = vecDistancia.x ** 2 + vecDistancia.y ** 2;
+      let distCuadrada = vecDistancia.x ** 2 + vecDistancia.y ** 2;
     
-        //HACER NEGATIVO ESTE VECTOR Y LOS ZOMBIES TE HUYEN
-        vecDistancia.x = +(50 * vecDistancia.x) / distCuadrada;
-        vecDistancia.y = +(50 * vecDistancia.y) / distCuadrada;
-        return vecDistancia;
-      }
+      vecDistancia.x = +(50 * vecDistancia.x) / distCuadrada;
+      vecDistancia.y = +(50 * vecDistancia.y) / distCuadrada;
+      return vecDistancia;
+    }
  
-      aplicarFuerza(fuerza) {
-        if (!fuerza) return;
-        this.velocidad.x += fuerza.x;
-        this.velocidad.y += fuerza.y;
+    aplicarFuerza(fuerza) {
+      if (!fuerza) return;
+      this.velocidad.x += fuerza.x;
+      this.velocidad.y += fuerza.y;
     
-        // Limitar la velocidad máxima
-        const velocidadCuadrada = this.velocidad.x **2 + this.velocidad.y **2;
-        if (velocidadCuadrada > this.velMaxCuadrada) {
-          const magnitud = Math.sqrt(velocidadCuadrada);
-          this.velocidad.x = (this.velocidad.x / magnitud) * this.velMax;
-          this.velocidad.y = (this.velocidad.y / magnitud) * this.velMax;
+      // Limitar la velocidad máxima
+      const velocidadCuadrada = this.velocidad.x **2 + this.velocidad.y **2;
+      if (velocidadCuadrada > this.velMaxCuadrada) {
+        const magnitud = Math.sqrt(velocidadCuadrada);
+        this.velocidad.x = (this.velocidad.x / magnitud) * this.velMax;
+        this.velocidad.y = (this.velocidad.y / magnitud) * this.velMax;
+      }
+    }
+ 
+    cohesion(vecinos) {
+      const vecPromedio = new PIXI.Point(0, 0);
+      let total = 0;
+    
+      vecinos.forEach((mosquito) => {
+        if (mosquito instanceof Enemigo) {
+          vecPromedio.x += mosquito.contenedorObjeto.x;
+          vecPromedio.y += mosquito.contenedorObjeto.y;
+          total++;
         }
-      }
- 
-      cohesion(vecinos) {
-        const vecPromedio = new PIXI.Point(0, 0);
-        let total = 0;
-    
-        vecinos.forEach((mosquito) => {
-          if (mosquito instanceof Enemigo) {
-            vecPromedio.x += mosquito.contenedorObjeto.x;
-            vecPromedio.y += mosquito.contenedorObjeto.y;
-            total++;
-          }
-        });
+      });
     
         if (total > 0) {
           vecPromedio.x /= total;
@@ -211,47 +214,47 @@ class Enemigo extends Objeto {
         }
     
         return vecPromedio;
-      }
+    }
 
-      separacion(vecinos) {
-        const vecFuerza = new PIXI.Point(0, 0);
+    separacion(vecinos) {
+      const vecFuerza = new PIXI.Point(0, 0);
     
-        vecinos.forEach((mosquito) => {
-          if (mosquito instanceof Enemigo) {
-            const distancia = distanciaAlCuadrado(
-              this.contenedorObjeto.x,
-              this.contenedorObjeto.y,
-              mosquito.contenedorObjeto.x,
-              mosquito.contenedorObjeto.y
-            );
+      vecinos.forEach((mosquito) => {
+        if (mosquito instanceof Enemigo) {
+          const distancia = distanciaAlCuadrado(
+            this.contenedorObjeto.x,
+            this.contenedorObjeto.y,
+            mosquito.contenedorObjeto.x,
+            mosquito.contenedorObjeto.y
+          );
     
-            const dif = new PIXI.Point(
-              this.contenedorObjeto.x - mosquito.contenedorObjeto.x,
-              this.contenedorObjeto.y - mosquito.contenedorObjeto.y
-            );
-            dif.x /= distancia;
-            dif.y /= distancia;
-            vecFuerza.x += dif.x;
-            vecFuerza.y += dif.y;
-          }
-        });
+          const dif = new PIXI.Point(
+            this.contenedorObjeto.x - mosquito.contenedorObjeto.x,
+            this.contenedorObjeto.y - mosquito.contenedorObjeto.y
+          );
+          dif.x /= distancia;
+          dif.y /= distancia;
+          vecFuerza.x += dif.x;
+          vecFuerza.y += dif.y;
+        }
+      });
     
         vecFuerza.x *= 2.3;
         vecFuerza.y *= 2.3;
         return vecFuerza;
-      }
+    }
 
-      alineacion(vecinos) {
-        const vecPromedio = new PIXI.Point(0, 0);
-        let total = 0;
+    alineacion(vecinos) {
+      const vecPromedio = new PIXI.Point(0, 0);
+      let total = 0;
     
-        vecinos.forEach((mosquito) => {
-          if (mosquito instanceof Enemigo) {
-            vecPromedio.x += mosquito.velocidad.x;
-            vecPromedio.y += mosquito.velocidad.y;
-            total++;
-          }
-        });
+      vecinos.forEach((mosquito) => {
+        if (mosquito instanceof Enemigo) {
+          vecPromedio.x += mosquito.velocidad.x;
+          vecPromedio.y += mosquito.velocidad.y;
+          total++;
+        }
+      });
     
         if (total > 0) {
           vecPromedio.x /= total;
@@ -274,59 +277,8 @@ class Enemigo extends Objeto {
   actualizarPosicionEnGrid() {
     this.grid.update(this);
   }*/
-    repelerObstaculos(vecinos) {
-        const vecFuerza = new PIXI.Point(0, 0);
-        let cant = 0;
-        vecinos.forEach((obstaculo) => {
-          if (obstaculo instanceof Obstaculo) {
-            const distCuadrada = distanciaAlCuadrado(
-              this.contenedorObjeto.x,
-              this.contenedorObjeto.y,
-              obstaculo.contenedorObjeto.x,
-              obstaculo.contenedorObjeto.y
-            );
+ 
     
-            if (distCuadrada < obstaculo.radio ** 2) {
-              //SI ESTA A MENOS DE UNA CELDA DE DIST
-              const dif = new PIXI.Point(
-                this.contenedorObjeto.x - obstaculo.contenedorObjeto.x,
-                this.contenedorObjeto.y - obstaculo.contenedorObjeto.y
-              );
-              dif.x /= distCuadrada;
-              dif.y /= distCuadrada;
-              vecFuerza.x += dif.x;
-              vecFuerza.y += dif.y;
-              cant++;
-            }
-          }
-        });
-        if (cant) {
-          vecFuerza.x *= 40;
-          vecFuerza.y *= 40;
-          // vecFuerza.x += -this.velocidad.x;
-          // vecFuerza.y += -this.velocidad.y;
-        }
-    
-        return vecFuerza;
-      }
-    
-      /*aplicarFuerza(fuerza) {
-        if (!fuerza) return;
-        // let limiteDeFuerza = 0.1;
-        // //SI LA FUERZA Q LE VAMOS A APLICAR ES MUY POCA, NI LA APLICAMOS
-        // if(Math.abs(fuerza.x)<limiteDeFuerza && Math.abs(fuerza.y)<limiteDeFuerza) return;
-        this.velocidad.x += fuerza.x;
-        this.velocidad.y += fuerza.y;
-    
-        // Limitar la velocidad máxima
-        const velocidadCuadrada =
-          this.velocidad.x * this.velocidad.x + this.velocidad.y * this.velocidad.y;
-        if (velocidadCuadrada > this.velMaxCuadrada) {
-          const magnitud = Math.sqrt(velocidadCuadrada);
-          this.velocidad.x = (this.velocidad.x / magnitud) * this.velMax;
-          this.velocidad.y = (this.velocidad.y / magnitud) * this.velMax;
-        }
-      }*/
     
       /*normalizarVelocidad() {
         if (this.velocidad.x == 0 && this.velocidad.y == 0) {
@@ -352,8 +304,8 @@ class Enemigo extends Objeto {
         }
         
       }*/
-   
 
-  }
+         
+}
 
   

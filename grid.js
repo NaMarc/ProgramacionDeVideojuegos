@@ -23,9 +23,7 @@ class Grid{
     getCelda(x, y) {
         let newx = Math.max(0, Math.min(this.celdasAncho - 1, x));
         let newy = Math.max(0, Math.min(this.celdasAlto - 1, y));
-        return this.celdas[newx][newy];
-       
-        
+        return this.celdas[newx][newy];   
     }
 
     agregar(objeto) {

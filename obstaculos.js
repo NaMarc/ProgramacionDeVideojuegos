@@ -1,27 +1,23 @@
 
 class Obstaculo extends Objeto{
     constructor(x, y, juego, imagenUrl) {
-        super(x, y , juego)
+        super(x, y ,0, juego)
         this.tipo = "";
-       
-              //Textura- imagen
-              this.textura = PIXI.Texture.from(imagenUrl);
-              this.sprite = new PIXI.Sprite(this.textura);
+        this.debug = 0;
+
+        //Textura- imagen
+        this.textura = PIXI.Texture.from(imagenUrl);
+        this.sprite = new PIXI.Sprite(this.textura);
               
-              // Obstáculo
-              this.radio = this.sprite.width * 0.5;
-              this.sprite.anchor.set(0.5, 0.82);
-              // Posición aleatoria
-              //this.sprite.x = Math.random() * (this.app.renderer.width - this.sprite.width);
-              //this.sprite.y = Math.random() * (this.app.renderer.height - this.sprite.height);
+        // Obstáculo
+        this.radio = this.sprite.width * 0.5;
+        this.sprite.anchor.set(0.5/*, 0.82*/);
       
-              this.contenedorObjeto.addChild(this.sprite);
-              this.actualizarZIndex();
+        this.contenedorObjeto.addChild(this.sprite);
+        this.actualizarZIndex();
       
-              this.contenedorObjeto.pivot.set(this.sprite.width/2, this.sprite.height)
-              this.meterEnGrid();
-              //this.actualizar();
-    
+        this.contenedorObjeto.pivot.set(this.sprite.width/2, this.sprite.height)
+        this.meterEnGrid();            
     }
 
     meterEnGrid() {
@@ -46,9 +42,6 @@ class Obstaculo extends Objeto{
     }
 
 
-    actualizar() {
-        super.actualizar();
-    }
-
-    
+    actualizar() {super.actualizar(); }
+   
 }

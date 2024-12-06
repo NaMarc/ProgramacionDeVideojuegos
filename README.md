@@ -9,8 +9,7 @@ El protagonista se encuentra perdido en un bosque oscuro repleto de insectos en 
 ## Movimientos
 
 ASDW Para mover
-V Apagar luz
-B Encender luz
+Barra de espacio Apagar luz / Encender luz
 F Atacar
 
 ### Integrantes

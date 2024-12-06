@@ -6,7 +6,6 @@ class Celda{
         this.tamanioCelda = tamanioCelda;
         
         this.objetosAca= {};
-
     }
    
     agregar(objeto){

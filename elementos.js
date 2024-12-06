@@ -7,9 +7,9 @@ class Elementos {
         this.juego = juego;
         
         this.barraDeVida = new BarraDeVida(this.app, 50, 20);
-        this.temporizador = new Temporalizador(this.app, 1090, 80, 60, this.juego); /**Cambiar tiempo inicial a 180 */
-        this.contador = new Contador(this.app, 1099, 160 ); //Quitar? Contador de bichos muertos
-        this.indicadorDeLuz = new IndicadorDeLuz(this.app, 105, 65 );
+        this.temporizador = new Temporalizador(this.app, 1099, 80, 60, this.juego); /**Cambiar tiempo inicial a 180 */
+        this.contador = new Contador(this.app, 1099, 180 ); //Quitar? Contador de bichos muertos
+        this.indicadorDeLuz = new IndicadorDeLuz(this.app, 77, 68);
     }
 
     perderVida() {
@@ -127,20 +127,26 @@ class Contador{
         this.x = x;
         this.y = y;
         this.numerosContador = this.crearTexto(x, y); 
-        //this.crearCirculoContador(x, y); 
+        this.crearCirculoContador(x, y); 
 
         const mosca = PIXI.Sprite.from('assets/MM.png');  
-        mosca.x = 1045;
-        mosca.y = 155;
+        mosca.x = 1060;
+        mosca.y = 172;
         mosca.scale.set(0.03);
         this.app.stage.addChild(mosca); 
+
+        const indicador = PIXI.Sprite.from('assets/indicador.png');  
+        indicador.x = 1057;
+        indicador.y = 140;
+        indicador.scale.set(0.65);
+        this.app.stage.addChild(indicador);  
     }
 
    
 
     crearCirculoContador(x, y){
         const circuloContador = new PIXI.Graphics();
-        circuloContador.beginFill(0xD3D3D3); //gris
+        circuloContador.beginFill(0xFFFF99); //
         circuloContador.alpha = 0.30;
         circuloContador.drawCircle(x , y , 40); 
         circuloContador.endFill();
@@ -151,16 +157,16 @@ class Contador{
     crearTexto(x, y) {
         const estiloTexto = new PIXI.TextStyle({
             fontFamily: 'Tiny5',
-            fontSize: 28,
+            fontSize: 26,
             fill: 'white',
             align: 'center'
         });
         const textoPixi = new PIXI.Text('000', estiloTexto);
 
         //Centrar en el circulo
-        textoPixi.anchor.set(0.5); 
-        textoPixi.x = x; 
-        textoPixi.y = y; 
+        //textoPixi.anchor.set(0.5); 
+        textoPixi.x = 1095; 
+        textoPixi.y = 165; 
 
         this.app.stage.addChild(textoPixi); 
         return textoPixi;
@@ -173,7 +179,7 @@ class Contador{
 class IndicadorDeLuz{
     constructor(app, x, y){
         this.app = app;
-        //this.crearCirculoContador(x, y);
+        
         this.x = x;
         this.y = y;
         
@@ -182,17 +188,21 @@ class IndicadorDeLuz{
         linterna.y = 35;
         linterna.scale.set(0.5);
         this.app.stage.addChild(linterna);
+
+        this.crearCirculoContador(x, y);
     }
 
     crearCirculoContador(x, y){
         const circuloContador = new PIXI.Graphics();
-        circuloContador.beginFill(0xFFFF99); //amarillo
-        circuloContador.alpha = 0.30;
-        circuloContador.drawCircle(x , y , 40); 
+        circuloContador.beginFill(0x000000); 
+        circuloContador.alpha = 0.70;
+        circuloContador.drawCircle(x , y , 30); 
         circuloContador.endFill();
         
         this.app.stage.addChild(circuloContador); 
+           
     }
-    
+  
+  
 }
 

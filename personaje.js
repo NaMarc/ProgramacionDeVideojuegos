@@ -1,14 +1,19 @@
 
 class Personaje extends Objeto{
-    constructor(x, y, juego, elementos, eventos) { 
-        super(x, y, juego);
+    constructor(x, y, juego,velMax, elementos, eventos) { 
+        super(x, y, velMax, juego);
+
+        this.velocidadMax = velMax;
 
         this.elementos = elementos;  
         this.eventos = eventos; 
 
         this.vidas = 3;
         this.velocidad = 5;
-
+        /*this.velocidad = new PIXI.Point(0.005 , 0.005);
+        this.velMax= velMax;
+        this.velMaxCuadrada = velMax **2;*/
+ 
         this.estadoAtacando = false;
        
         this.teclas = {};
@@ -17,12 +22,16 @@ class Personaje extends Objeto{
         this.focusActivado = false;
 
         this.cargarSpriteAnimado("Assets/Player/texture.json", "Idle");
-        this.nuevaLuz(); //filtro
+        this.nuevaLuz();
 
-        this.agregarLuz(); //imagen
+        this.agregarLuz();
        
         this.setupInput();
         //this.actualizar();
+
+        this.ataqueEnCurso = false;
+        this.tiempoDeAtaque = 0.05;  
+        this.tiempoAtaqueRestante = 0;
     }
 
     nuevaLuz() {
@@ -61,17 +70,18 @@ class Personaje extends Objeto{
             if (event.key === ' ') {  
                 this.focusActivado = !this.focusActivado;  
                 this.focus.alpha = this.focusActivado ? 1 : 0.2;
-            
+
                 this.luzActivada = !this.luzActivada;  
                 this.luz.alpha = this.luzActivada ? 0.5 : 0.1;
+
             }
         });
 
     }
     
 
-    agregarLuz(){
-        this.luz = PIXI.Sprite.from('./Assets/luz108.png'); //cambiar imagen
+   agregarLuz(){
+        this.luz = PIXI.Sprite.from('./Assets/luz108.png');  
         this.contenedorObjeto.addChild(this.luz);
         this.luz.anchor.set(0.5);
         this.luz.scale.set(4);
@@ -79,6 +89,7 @@ class Personaje extends Objeto{
         this.luz.alpha = 0.5;
 
         this.luz.visible = true;
+       
     }
 
     actualizarLuz(){
@@ -95,8 +106,10 @@ class Personaje extends Objeto{
             this.teclas[tecla] = true; 
         
             // f para ataque
-            if (tecla === 'f') {
+            if (tecla === 'f' && !this.ataqueEnCurso) {
                 this.estadoAtacando = true;
+                this.ataqueEnCurso = true; 
+                this.tiempoAtaqueRestante = this.tiempoDeAtaque; 
             }
         });
         
@@ -137,7 +150,7 @@ class Personaje extends Objeto{
 
         // Si no hay movimiento ni ataque, usar la animación "Idle"
         if (!animacionDeseada) {
-            if (this.estadoAtacando) {
+            if (this.ataqueEnCurso) {
                 animacionDeseada = 'Ataca';  // Si está atacando, usa la animación de ataque
             } else {
                 animacionDeseada = 'Idle';  // De lo contrario, la animación "Idle"
@@ -161,6 +174,13 @@ class Personaje extends Objeto{
                 this.contenedorObjeto.x += this.velocidad;
             }
         }
+        if (this.ataqueEnCurso) {
+            this.tiempoAtaqueRestante -= this.juego.app.ticker.deltaTime / 1000;  
+            if (this.tiempoAtaqueRestante <= 0) {
+                this.ataqueEnCurso = false;  
+                this.estadoAtacando = false; 
+            }
+        }
     }
 
     // Verificar si el movimiento es válido (dentro de los límites)
@@ -174,8 +194,11 @@ class Personaje extends Objeto{
 
    
     actualizar() {
+       // this.calcularYAplicarFuerzas();
+      
         // if (!this.listo) return;
         this.mover();
+        
 
         if (this.juego.contadorDeFrames % 4 == 1) {
            this.actualizarLuz(); //Posicion     
@@ -185,11 +208,10 @@ class Personaje extends Objeto{
             this.focus.x = this.contenedorObjeto.x - this.focus.width / 2;  
             this.focus.y = this.contenedorObjeto.y - this.focus.height / 2;  
         }
-        //this.calcularYAplicarFuerzas();
+        
         
         super.actualizar();    
     }
-
 
     // VIDAS
    updateVidas() {
@@ -204,6 +226,41 @@ class Personaje extends Objeto{
             }
         }
    }
+
+   calcularYAplicarFuerzas() {
+    //
+    let fuerzas = new PIXI.Point(0, 0);
+
+    const repulsionAObstaculos = this.repelerObstaculos();
+    if (repulsionAObstaculos) {
+    
+      fuerzas.x += repulsionAObstaculos.x;
+      fuerzas.y += repulsionAObstaculos.y;
+    }
+
+    const bordes = this.ajustarPorBordes();
+    fuerzas.x += bordes.x;
+    fuerzas.y += bordes.y;
+    this.fuerzas = fuerzas;
+    this.aplicarFuerza(fuerzas);
+  }
+
+  aplicarFuerza(fuerza) {
+    if (!fuerza) return;
+    this.velocidad.x += fuerza.x;
+    this.velocidad.y += fuerza.y;
+   
+
+    // Limitar la velocidad máxima
+    const velocidadCuadrada = this.velocidad.x **2 + this.velocidad.y **2;
+    if (velocidadCuadrada > this.velMaxCuadrada) {
+      const magnitud = Math.sqrt(velocidadCuadrada);
+      this.velocidad.x = (this.velocidad.x / magnitud) * this.velMax;
+      this.velocidad.y = (this.velocidad.y / magnitud) * this.velMax;
+    }
+  }
+
+ 
 }
 
 

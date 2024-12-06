@@ -14,7 +14,7 @@ class Juego {
             width: this.canvasWidth,
             height: this.canvasHeight,
             //resizeTo: window,
-            backgroundColor: 0x000000  
+            backgroundColor: 0x000000,   
         });
         
         document.body.appendChild(this.app.view);
@@ -33,7 +33,7 @@ class Juego {
             src: ['assets/mystic-forest.ogg'], 
             autoplay: true,  
             loop: true,      
-            volume: 0.4     
+            volume: 0.2     
         });
 
         this.grid = new Grid(this, 50);
@@ -44,18 +44,18 @@ class Juego {
         //this.mantis = [];
         //this.tesoro = [];
 
-        this.agregarObstaculo("arbol", 10);
+        this.agregarObstaculo("arbol", 20);
         this.agregarObstaculo("piedra", 5);
-        this.agregarObstaculo("arbusto", 10);
+        //this.agregarObstaculo("arbusto", 10);
         //this.agregarTesoros("tesoro", 3);
-        this.agregarEnemigos(50);
+        this.agregarEnemigos(100);
         //this.agregarMantis(10);
 
         this.iniciarElementos();
         this.iniciarEventos(); 
         
         //
-        this.personaje = new Personaje(150, 150, this, this.elementos, this.eventos);
+        this.personaje = new Personaje(200, 200, this, this.elementos, this.eventos);
         
         this.ponerListeners();
 
@@ -79,18 +79,19 @@ class Juego {
     agregarFondo() {
         this.contenedorFondo = new PIXI.Container();
         this.textura = PIXI.Texture.from("Assets/Pasto3.png");
-        this.fondoSprite = new PIXI.TilingSprite(this.textura, this.app.view.width, this.app.view.height);
+        this.fondoSprite = new PIXI.TilingSprite(this.textura, this.app.view.width , this.app.view.height );
         this.contenedorFondo.addChild(this.fondoSprite);
         this.contenedor.addChild(this.contenedorFondo);
     }
+        
     agregarObstaculo(tipo, cantidad) {
         if (tipo === "arbol") {
             for (let i = 0; i < cantidad; i++) {
                 const arbol = (new Obstaculo(Math.random() * this.canvasWidth, 
                 Math.random() * this.canvasHeight, 
-                this, 
+                this,
                 "Assets/arbol3.png"));
-                this.obstaculos.push(arbol);//Math.random() * (this.app.renderer.width - this.sprite.width);
+                this.obstaculos.push(arbol);
                 this.objetos.push(arbol);
             }
         }
@@ -98,7 +99,7 @@ class Juego {
             for (let i = 0; i < cantidad; i++) {
                 const piedra = (new Obstaculo(Math.random() * this.canvasWidth, 
                 Math.random() * this.canvasHeight, 
-                this, 
+                this,
                 "Assets/roca2.png"));
                 this.obstaculos.push(piedra);
                 this.objetos.push(piedra);
@@ -144,11 +145,11 @@ class Juego {
 
     agregarMantis(cant) {
         for (let i = 0; i < cant; i++) {
-           // let velocidad = Math.random() * 1.3 + 1.5;
+            let velocidad = Math.random() * 1.3 + 1.5;
             const m = new Mantis(
-                Math.random() * this.ancho,
-                Math.random() * this.alto,
-               // velocidad,
+                Math.random() * this.canvasWidth,
+                Math.random() * this.canvasHeight,
+                velocidad,
                 this
             ); 
             this.mantis.push(m); 
@@ -198,10 +199,7 @@ class Juego {
         if (this.pausa) return;
         this.contadorDeFrame++;
 
-       // for (let objeto of this.objetos) {
-       //     this.objeto.actualizar();
-            // objeto.render();    
-       // }
+       
         
         //FALTABA HACERLE UPDATE AL PERSONAJE
         this.personaje.actualizar();
@@ -212,7 +210,12 @@ class Juego {
             // objeto.render();
 
         }
-       
+        //** */
+       for (let obstaculos of this.obstaculos) {
+            obstaculos.actualizar();
+            // objeto.render();    
+        }
+
         this.condicionDeDerrota();
         this.condicionDeVictoria();
 
@@ -225,7 +228,7 @@ class Juego {
         const targetX = -this.personaje.contenedorObjeto.x + window.innerWidth / 2;
         const targetY = -this.personaje.contenedorObjeto.y + window.innerHeight / 2;
     
-        // LERP (suvizar movimiento de camara)
+        // LERP 
         this.contenedor.x = lerp(this.contenedor.x, targetX, this.lerpSpeed);
         this.contenedor.y = lerp(this.contenedor.y, targetY, this.lerpSpeed);
     
@@ -233,13 +236,14 @@ class Juego {
         if (this.contenedor.x > 0) this.contenedor.x = 0;
         if (this.contenedor.y > 0) this.contenedor.y = 0;
     
-        // Limitar el movimiento en el eje X e Y para que no salga de la escena
-        const maxX = Math.max(0, this.personaje.contenedorObjeto.x - window.innerWidth + this.personaje.contenedorObjeto.width);
-        const maxY = Math.max(0, this.personaje.contenedorObjeto.y - window.innerHeight + this.personaje.contenedorObjeto.height);
+        //Limitar el movimiento en el eje X e Y para que no salga de la escena
+        const maxX = Math.max(0, this.personaje.contenedorObjeto.x - window.innerWidth /*+this.personaje.contenedorObjeto.width */ );
+        const maxY = Math.max(0, this.personaje.contenedorObjeto.y - window.innerHeight /* this.personaje.contenedorObjeto.height */);
     
         if (this.contenedor.x < -maxX) this.contenedor.x = -maxX;
         if (this.contenedor.y < -maxY) this.contenedor.y = -maxY;
-    }
+   }
+                      
     
 }
 
