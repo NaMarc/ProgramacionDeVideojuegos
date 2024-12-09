@@ -9,7 +9,7 @@ class Elementos {
         this.barraDeVida = new BarraDeVida(this.app, 50, 20);
         this.temporizador = new Temporalizador(this.app, 1099, 80, 60, this.juego); /**Cambiar tiempo inicial a 180 */
         this.contador = new Contador(this.app, 1099, 180 ); //Quitar? Contador de bichos muertos
-        this.indicadorDeLuz = new IndicadorDeLuz(this.app, 77, 68);
+        this.indicadorDeLuz = new IndicadorDeLuz(this.app, 77, 68, this.juego);
     }
 
     perderVida() {
@@ -41,15 +41,11 @@ class BarraDeVida {
 
     perderCorazones() {
         if (this.vidas > 0) {
-            const corazon = this.corazones[this.corazones.length - 1]; 
-            this.app.stage.removeChild(corazon); 
-            this.corazones.pop(); 
-            this.vidas--; 
-            
-        } 
+            this.vidas--;
+            this.corazones[this.vidas].alpha = 0;  
+        }
+    
     }
-    
-    
 }
 
 class Temporalizador {
@@ -63,19 +59,14 @@ class Temporalizador {
         this.temporizadorTexto = this.crearTexto(x, y); 
         this.iniciarTemporizador();
         this.tiempoAgotado = false;
-        //
-        
+        //   
         const reloj = PIXI.Sprite.from('assets/timer.png');  
         reloj.x = this.x -55;
         reloj.y = this.y -55;
         reloj.scale.set(0.85);
-        this.app.stage.addChild(reloj);  
-     
-        
+        this.app.stage.addChild(reloj);     
     }
     
-  
-
     crearTexto(x, y) {
         const estiloTexto = new PIXI.TextStyle({
             fontFamily: 'Tiny5',
@@ -121,8 +112,6 @@ class Temporalizador {
 }
 
 
-
-//Agregar contador de insectos muertos.
 class Contador{
     constructor(app, x, y){
         this.app = app;
@@ -143,9 +132,7 @@ class Contador{
         indicador.y = 140;
         indicador.scale.set(0.65);
         this.app.stage.addChild(indicador);  
-    }
-
-   
+    } 
 
     crearCirculoContador(x, y){
         const circuloContador = new PIXI.Graphics();
@@ -179,17 +166,13 @@ class Contador{
         this.score +=1;
         this.numerosContador.text = this.score.toString();
     }
-
-    
-
    
 }
 
-//Agregar imagen de la antorcha/lampara
 class IndicadorDeLuz{
-    constructor(app, x, y){
+    constructor(app, x, y, juego){
         this.app = app;
-        
+        this.juego = juego;
         this.x = x;
         this.y = y;
         
@@ -205,14 +188,21 @@ class IndicadorDeLuz{
     crearCirculoContador(x, y){
         const circuloContador = new PIXI.Graphics();
         circuloContador.beginFill(0x000000); 
-        circuloContador.alpha = 0.70;
+        circuloContador.alpha = 0.1;
         circuloContador.drawCircle(x , y , 30); 
         circuloContador.endFill();
         
-        this.app.stage.addChild(circuloContador); 
-           
+        this.app.stage.addChild(circuloContador);  
+        this.circuloContador = circuloContador;     
     }
-  
+
+    verificarEstado() {
+        if (this.juego.personaje.luzActivada) {
+            this.circuloContador.alpha = 0.0;
+        } else {
+            this.circuloContador.alpha = 0.5;
+        }
+    }
   
 }
 

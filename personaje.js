@@ -21,6 +21,8 @@ class Personaje extends Objeto{
 
         this.focusActivado = false;
 
+        this.perdioVida = false;
+
         this.cargarSpriteAnimado("Assets/Player/texture.json", "Idle");
         this.nuevaLuz();
 
@@ -61,7 +63,7 @@ class Personaje extends Objeto{
         this.focus.y = this.contenedorObjeto.y;
 
         //0 a 1
-        this.focus.alpha = 1;  
+        this.focus.alpha = 0.5;  
 
         //  Eventos del teclado
         this.juego.app.stage.interactive = true;  
@@ -197,12 +199,12 @@ class Personaje extends Objeto{
        // this.calcularYAplicarFuerzas();
       
         // if (!this.listo) return;
-        this.mover();
-        this.verificarEstadoDeSalud();
-        
-
+        this.mover(); 
+        this.verificarEstadoDeSalud(); 
+      
         if (this.juego.contadorDeFrames % 4 == 1) {
-           this.actualizarLuz(); //Posicion     
+           this.actualizarLuz(); //Posicion  
+           
         }
         //Actualiza la luz nueva
         if (this.focus) {
@@ -214,19 +216,7 @@ class Personaje extends Objeto{
         super.actualizar();    
     }
 
-    // VIDAS
-   updateVidas() {
-        if(this.vidas >= 0){
-            this.vidas--;
-            console.log('El personaje pierde una vida')
-            this.elementos.perderVida();
-
-            if (this.vidas === 0) {
-               console.log("Fin");
-               // this.eventos.mostrar();
-            }
-        }
-   }
+ 
 
    calcularYAplicarFuerzas() {
     //
@@ -261,23 +251,40 @@ class Personaje extends Objeto{
     }
   }
 
-  verificarEstadoDeSalud() {
-    if (this.vidas == 200) {
-        console.log('VIDA: 2');
+ /*verificarEstadoDeSalud() {  
+    if (this.vidas === 200 && !this.perdioVida) {
         this.juego.elementos.perderVida();
-    }
-    if (this.vidas == 100) {
-        console.log('VIDA: 1');
+        this.perdioVida = true;  
+    }else if (this.vidas === 100 && !this.perdioVida) {
         this.juego.elementos.perderVida();
-    }
-    if (this.vidas == 0) {
-        console.log('PERDIO');
+        this.perdioVida = true;  
+    }else  if (this.vidas === 0 && !this.perdioVida) {
         this.juego.elementos.perderVida();
         this.juego.condicionDeDerrota();
+        //this.perdioVida = true;  
     }
-}
-
-
+    this.perdioVida = false; 
+ } */
+    verificarEstadoDeSalud() {
+        if (!this.perdioVida) {
+            if (this.vidas === 200) {
+                this.juego.elementos.perderVida();
+                this.perdioVida = true;  
+            } else if (this.vidas === 100) {
+                this.juego.elementos.perderVida();
+                this.perdioVida = true;  
+            } else if (this.vidas === 0) {
+                this.juego.elementos.perderVida();
+                this.juego.condicionDeDerrota();
+                this.perdioVida = true;  
+            }
+        } else {
+            if (this.vidas !== 200 && this.vidas !== 100 && this.vidas !== 0) {
+                this.perdioVida = false;
+            }
+        }
+    }
+    
 
 }
 

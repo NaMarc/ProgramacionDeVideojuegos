@@ -309,18 +309,21 @@ class Enemigo extends Objeto {
         }
         
       }*/
+      
       recibirAtaque() {
         this.vida -= 1;
         if (this.vida <= 0) {
           this.juego.enemigo = this.juego.enemigo.filter((k) => k != this);
-          //LO SACO DE LA GRILLA
+          this.muerteEnCurso = true;
+
+          this.animacion = this.cargarSpriteAnimado("Assets/Sangre/sangre_image.json", "Explosion");
           
-          this.juego.grid.remover(this);
-          this.contenedorObjeto.removeChild(this);
-          this.contenedorObjeto.removeChild(this.sprite);
-          this.juego.elementos.contador.aumentarContador();
-          
-          //No cuenta con animacion de muerte
+          setTimeout(() => {
+            this.juego.grid.remover(this);
+            this.contenedorObjeto.removeChild(this);
+            this.contenedorObjeto.removeChild(this.sprite);
+            this.juego.elementos.contador.aumentarContador();
+        }, 2000); 
         } 
       }
        
@@ -330,7 +333,7 @@ class Enemigo extends Objeto {
           this.miCeldaActual == this.juego.personaje.miCeldaActual 
         && this.juego.personaje.estadoAtacando){
           this.recibirAtaque()
-          console.log('Recibe ataque')
+         // console.log('Recibe ataque')
         }
       }
 
@@ -343,8 +346,8 @@ class Enemigo extends Objeto {
 
             setTimeout(() => {
               this.puedeAtacar = true;
-            }, 1000);
-            console.log('Es atacado. Vidas restantes:', this.juego.personaje.vidas);
+            }, 2000);
+            console.log('Es atacado. Vidas del personaje:', this.juego.personaje.vidas);
 
           }else {
             //console.log('todavia no puede volver a atacar')
@@ -352,7 +355,8 @@ class Enemigo extends Objeto {
         }
       }
 
-         
+
+            
 }
 
   

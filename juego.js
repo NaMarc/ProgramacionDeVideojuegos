@@ -191,14 +191,19 @@ class Juego {
         });
     }
 
-    pausar() {
+    /*pausar() {
         this.pausa = !this.pausa;
-    }
+    }*/
 
     update() {
-        if (this.pausa) return;
+        //if (this.pausa) return;
         this.contadorDeFrame++;
 
+        if (this.elementos.indicadorDeLuz) {  // Verifica que 'indicadorDeLuz' esté definido
+            this.elementos.indicadorDeLuz.verificarEstado();  // Ahora puedes llamar al método
+        } else {
+            console.error('IndicadorDeLuz no está definido correctamente');
+        }
        
         
         //FALTABA HACERLE UPDATE AL PERSONAJE
