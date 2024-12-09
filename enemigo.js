@@ -8,6 +8,8 @@ class Enemigo extends Objeto {
         this.juego = juego;
         this.grid = juego.grid;
         this.listo = false;
+        this.vida = 1;
+        this.puedeAtacar = true;
 
         this.VelMaxOriginal = velMax;
         this.velMaxEnModoHuir = velMax * 2;
@@ -82,6 +84,9 @@ class Enemigo extends Objeto {
       }
 
     actualizar() { 
+
+      this.verificarEstadoDeVida();
+      this.atacar();
       
       //this.ajustarPorBordes();
 
@@ -304,6 +309,48 @@ class Enemigo extends Objeto {
         }
         
       }*/
+      recibirAtaque() {
+        this.vida -= 1;
+        if (this.vida <= 0) {
+          this.juego.enemigo = this.juego.enemigo.filter((k) => k != this);
+          //LO SACO DE LA GRILLA
+          
+          this.juego.grid.remover(this);
+          this.contenedorObjeto.removeChild(this);
+          this.contenedorObjeto.removeChild(this.sprite);
+          this.juego.elementos.contador.aumentarContador();
+          
+          //No cuenta con animacion de muerte
+        } 
+      }
+       
+
+      verificarEstadoDeVida(){
+        if(
+          this.miCeldaActual == this.juego.personaje.miCeldaActual 
+        && this.juego.personaje.estadoAtacando){
+          this.recibirAtaque()
+          console.log('Recibe ataque')
+        }
+      }
+
+      atacar(){
+        if(this.miCeldaActual == this.juego.personaje.miCeldaActual && this.estados.ATACAR){
+          if(this.puedeAtacar){
+            this.juego.personaje.vidas -= 10;
+      
+            this.puedeAtacar = false;
+
+            setTimeout(() => {
+              this.puedeAtacar = true;
+            }, 1000);
+            console.log('Es atacado. Vidas restantes:', this.juego.personaje.vidas);
+
+          }else {
+            //console.log('todavia no puede volver a atacar')
+          }
+        }
+      }
 
          
 }

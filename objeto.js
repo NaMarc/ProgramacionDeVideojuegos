@@ -88,9 +88,10 @@ class Objeto{
 
     estoyEnLaMismaCeldaQue(fulano) {
         return (
-            fulano.miCeldaActual &&
             this.miCeldaActual &&
+            fulano.miCeldaActual &&
             fulano.miCeldaActual == this.miCeldaActual
+            
         );
     }     
         
@@ -155,7 +156,7 @@ class Objeto{
             let cant = 0;
           
             const umbralDistancia = 10000;  
-          
+      
             vecinos.forEach((cosa) => {
               if (cosa instanceof Obstaculo) {
                 

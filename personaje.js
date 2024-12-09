@@ -8,7 +8,7 @@ class Personaje extends Objeto{
         this.elementos = elementos;  
         this.eventos = eventos; 
 
-        this.vidas = 3;
+        this.vidas = 300;
         this.velocidad = 5;
         /*this.velocidad = new PIXI.Point(0.005 , 0.005);
         this.velMax= velMax;
@@ -198,6 +198,7 @@ class Personaje extends Objeto{
       
         // if (!this.listo) return;
         this.mover();
+        this.verificarEstadoDeSalud();
         
 
         if (this.juego.contadorDeFrames % 4 == 1) {
@@ -260,9 +261,25 @@ class Personaje extends Objeto{
     }
   }
 
- 
+  verificarEstadoDeSalud() {
+    if (this.vidas == 200) {
+        console.log('VIDA: 2');
+        this.juego.elementos.perderVida();
+    }
+    if (this.vidas == 100) {
+        console.log('VIDA: 1');
+        this.juego.elementos.perderVida();
+    }
+    if (this.vidas == 0) {
+        console.log('PERDIO');
+        this.juego.elementos.perderVida();
+        this.juego.condicionDeDerrota();
+    }
 }
 
+
+
+}
 
 
 

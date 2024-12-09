@@ -13,7 +13,7 @@ class Juego {
         this.app = new PIXI.Application({
             width: this.canvasWidth,
             height: this.canvasHeight,
-            //resizeTo: window,
+           // resizeTo: window,
             backgroundColor: 0x000000,   
         });
         
@@ -181,7 +181,7 @@ class Juego {
     condicionDeDerrota(){
         if (this.personaje.vidas === 0){
             this.gameOver.mostrar();
-            this.app.ticker.stop();
+            this.app.ticker.stop();         
         } 
     }
 
@@ -216,14 +216,14 @@ class Juego {
             // objeto.render();    
         }
 
-        this.condicionDeDerrota();
+        //this.condicionDeDerrota();
         this.condicionDeVictoria();
 
         this.actualizarCamara();    
     }
 
     
-    actualizarCamara() {
+   /* actualizarCamara() {
         // Posicion de la camara
         const targetX = -this.personaje.contenedorObjeto.x + window.innerWidth / 2;
         const targetY = -this.personaje.contenedorObjeto.y + window.innerHeight / 2;
@@ -237,12 +237,38 @@ class Juego {
         if (this.contenedor.y > 0) this.contenedor.y = 0;
     
         //Limitar el movimiento en el eje X e Y para que no salga de la escena
-        const maxX = Math.max(0, this.personaje.contenedorObjeto.x - window.innerWidth /*+this.personaje.contenedorObjeto.width */ );
-        const maxY = Math.max(0, this.personaje.contenedorObjeto.y - window.innerHeight /* this.personaje.contenedorObjeto.height */);
+        const maxX = Math.max(0, this.personaje.contenedorObjeto.x - window.innerWidth /*+this.personaje.contenedorObjeto.width */ //);
+       // const maxY = Math.max(0, this.personaje.contenedorObjeto.y - window.innerHeight /* this.personaje.contenedorObjeto.height */);
     
-        if (this.contenedor.x < -maxX) this.contenedor.x = -maxX;
-        if (this.contenedor.y < -maxY) this.contenedor.y = -maxY;
-   }
+        //if (this.contenedor.x < -maxX) this.contenedor.x = -maxX;
+        //if (this.contenedor.y < -maxY) this.contenedor.y = -maxY;
+   //}*/
+
+actualizarCamara() {
+    // Posicion de la camara en el personaje
+    const targetX = -this.personaje.contenedorObjeto.x + window.innerWidth / 2;
+    const targetY = -this.personaje.contenedorObjeto.y + window.innerHeight / 2;
+
+    //Lerp
+    this.contenedor.x = lerp(this.contenedor.x, targetX, this.lerpSpeed);
+    this.contenedor.y = lerp(this.contenedor.y, targetY, this.lerpSpeed);
+
+    // Limites de la escena
+    const sceneWidth = this.canvasWidth;  
+    const sceneHeight = this.canvasHeight;  
+
+    // Limites de la camara
+    const maxX = Math.max(0, sceneWidth - window.innerWidth);  
+    const maxY = Math.max(0, sceneHeight - window.innerHeight);  
+
+    //No se mueve fuera de los limites
+    if (this.contenedor.x > 0) this.contenedor.x = 0;
+    if (this.contenedor.y > 0) this.contenedor.y = 0;
+    if (this.contenedor.x < -maxX) this.contenedor.x = -maxX;
+    if (this.contenedor.y < -maxY) this.contenedor.y = -maxY;
+}
+
+
                       
     
 }

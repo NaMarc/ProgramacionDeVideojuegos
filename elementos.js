@@ -13,6 +13,7 @@ class Elementos {
     }
 
     perderVida() {
+       // this.vidas -= 1;
         this.barraDeVida.perderCorazones(); 
     }
 }
@@ -40,13 +41,15 @@ class BarraDeVida {
 
     perderCorazones() {
         if (this.vidas > 0) {
-            console.log('Quita un corazon')
-            const corazon = this.corazones[this.vidas - 1]; 
+            const corazon = this.corazones[this.corazones.length - 1]; 
             this.app.stage.removeChild(corazon); 
-            this.corazones.pop();
+            this.corazones.pop(); 
             this.vidas--; 
-        }
+            
+        } 
     }
+    
+    
 }
 
 class Temporalizador {
@@ -161,7 +164,7 @@ class Contador{
             fill: 'white',
             align: 'center'
         });
-        const textoPixi = new PIXI.Text('000', estiloTexto);
+        const textoPixi = new PIXI.Text('0', estiloTexto);
 
         //Centrar en el circulo
         //textoPixi.anchor.set(0.5); 
@@ -171,6 +174,13 @@ class Contador{
         this.app.stage.addChild(textoPixi); 
         return textoPixi;
     }
+
+    aumentarContador(){
+        this.score +=1;
+        this.numerosContador.text = this.score.toString();
+    }
+
+    
 
    
 }
