@@ -19,9 +19,6 @@ class Eventos {
             align: 'center'
         });
         const textoPixi = new PIXI.Text(texto, estiloTexto);
-        /*textoPixi.x = x; 
-        textoPixi.y = y; 
-        textoPixi.anchor.set(0.5); */
 
         this.textoPixi = textoPixi;
         return textoPixi; 
@@ -47,8 +44,7 @@ class Eventos {
     quitar(){
             this.app.stage.removeChild(this.textoPixi);
             this.app.stage.removeChild(this.rectangulo);
-            this.mensajeMostrado = false; 
-        
+            this.mensajeMostrado = false;      
     }
 
     actualizarPosicion(){
@@ -89,11 +85,13 @@ class GameOver extends Eventos {
         this.crearTexto('GAME OVER', 'red');
     }
 }
-
+//cambiar por imagen
 class Inicio extends Eventos{
     constructor(app, contenedor, personaje) {
         super(app, contenedor, personaje); 
-        this.crearTexto('Insectario \n Usa WASD para moverte \n B para prender la luz \n V para apagar \n F para atacar \n Busca los 3 tesoros antes de \n que se termine el tiempo', 'black');
+        this.crearTexto('Insectario \n Usa WASD para moverte \n Barra de espacio para  \n prender la luz o  apagar \n F para atacar\n Presiona enter para seguir ', 'black');
     }
+
+
 }
 

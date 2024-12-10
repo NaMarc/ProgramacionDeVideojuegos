@@ -18,7 +18,7 @@ class Enemigo extends Objeto {
         this.velocidad = new PIXI.Point(0.005 , 0.005);
         this.velMax= velMax;
         this.velMaxCuadrada = velMax **2;
-        this.vision = 120 + Math.floor(Math.random() * 150); //en pixels
+        this.vision = 120 + Math.floor(Math.random() * 150); 
 
         // Estados del enemigo
         this.estados = { IDLE: 0, ATACAR: 1 };
@@ -98,13 +98,9 @@ class Enemigo extends Objeto {
           this.hacerCosasSegunEstado();
            
       //}
-    
-        //if ((this.juego.contadorDeFrames /*+ this.equipoParaUpdate*/) % 4 == 1) {
-          //CADA 4 FRAME
-          this.calcularAngulo();
-          //this.contenedorObjeto.rotation = this.angulo;
-          this.ajustarSpriteSegunAngulo();
-       // }
+      this.calcularAngulo();
+      //this.contenedorObjeto.rotation = this.angulo;
+      this.ajustarSpriteSegunAngulo();
     
       this.contenedorObjeto.x += this.velocidad.x;
       this.contenedorObjeto.y += this.velocidad.y;
@@ -116,11 +112,6 @@ class Enemigo extends Objeto {
           this.velocidad.x *= 0.98;
           this.velocidad.y *= 0.98;
         }  
-    
-        // this.velocidad.x =lerp(this.velocidad.x, this.velocidad.x+this.acc.x,0.2)
-        // this.velocidad.y = lerp(this.velocidad.y, this.velocidad.y+this.acc.y,0.2)
-    
-        //this.angulo = Math.atan2(this.velocidad.y, this.velocidad.x);
     
         super.actualizar();
       }
@@ -272,20 +263,53 @@ class Enemigo extends Objeto {
     
         return vecPromedio;
       }
+      
+      recibirAtaque() {
+        this.vida -= 1;
+        if (this.vida <= 0) {
+          this.juego.enemigo = this.juego.enemigo.filter((k) => k != this);
+          this.muerteEnCurso = true;
 
- /*hacerQueLaVelocidadDeLaAnimacionCoincidaConLaVelocidad() {
-    this.spritesAnimados[this.spriteActual].animationSpeed =
-      0.07 *
-      calculoDeDistanciaRapido(0, 0, this.velocidad.x, this.velocidad.y) +
-      0.1;
-  }
-  actualizarPosicionEnGrid() {
-    this.grid.update(this);
-  }*/
- 
-    
-    
-      /*normalizarVelocidad() {
+          this.animacion = this.cargarSpriteAnimado("Assets/Sangre1/sangre_image.json", "Explosion");
+          
+          setTimeout(() => {
+            this.juego.grid.remover(this);
+            this.contenedorObjeto.removeChild(this);
+            this.contenedorObjeto.removeChild(this.sprite);
+            this.juego.elementos.contador.aumentarContador();
+        }, 2000); 
+        } 
+      }
+       
+
+      verificarEstadoDeVida(){
+        if(this.miCeldaActual == this.juego.personaje.miCeldaActual 
+          && this.juego.personaje.estadoAtacando){
+          this.recibirAtaque()
+        }
+      }
+
+      atacar(){
+        if(this.miCeldaActual == this.juego.personaje.miCeldaActual && this.estados.ATACAR){
+          if(this.puedeAtacar){
+            this.juego.personaje.vidas -= 10;
+      
+            this.puedeAtacar = false;
+
+            setTimeout(() => {
+              this.puedeAtacar = true;
+            }, 2000);
+            console.log('Es atacado. Vidas del personaje:', this.juego.personaje.vidas);
+
+          }else {
+            //console.log('todavia no puede volver a atacar')
+          }
+        }
+      }
+           
+}
+
+ /*normalizarVelocidad() {
         if (this.velocidad.x == 0 && this.velocidad.y == 0) {
           return;
         }
@@ -309,54 +333,5 @@ class Enemigo extends Objeto {
         }
         
       }*/
-      
-      recibirAtaque() {
-        this.vida -= 1;
-        if (this.vida <= 0) {
-          this.juego.enemigo = this.juego.enemigo.filter((k) => k != this);
-          this.muerteEnCurso = true;
-
-          this.animacion = this.cargarSpriteAnimado("Assets/Sangre/sangre_image.json", "Explosion");
-          
-          setTimeout(() => {
-            this.juego.grid.remover(this);
-            this.contenedorObjeto.removeChild(this);
-            this.contenedorObjeto.removeChild(this.sprite);
-            this.juego.elementos.contador.aumentarContador();
-        }, 2000); 
-        } 
-      }
-       
-
-      verificarEstadoDeVida(){
-        if(
-          this.miCeldaActual == this.juego.personaje.miCeldaActual 
-        && this.juego.personaje.estadoAtacando){
-          this.recibirAtaque()
-         // console.log('Recibe ataque')
-        }
-      }
-
-      atacar(){
-        if(this.miCeldaActual == this.juego.personaje.miCeldaActual && this.estados.ATACAR){
-          if(this.puedeAtacar){
-            this.juego.personaje.vidas -= 10;
-      
-            this.puedeAtacar = false;
-
-            setTimeout(() => {
-              this.puedeAtacar = true;
-            }, 2000);
-            console.log('Es atacado. Vidas del personaje:', this.juego.personaje.vidas);
-
-          }else {
-            //console.log('todavia no puede volver a atacar')
-          }
-        }
-      }
-
-
-            
-}
 
   

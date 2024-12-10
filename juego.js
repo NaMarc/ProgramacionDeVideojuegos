@@ -1,12 +1,7 @@
-/*Anotaciones
-
- -Ajustar tiempo total del juego
-
- */
-
 class Juego {
     constructor() {
         this.pausa = false;
+        this.juegoIniciado = false;
         this.canvasWidth = window.innerWidth * 2;
         this.canvasHeight = window.innerHeight * 2;
         this.lerpSpeed = 0.1; //camara
@@ -36,6 +31,32 @@ class Juego {
             volume: 0.2     
         });
 
+        this.inicio = new Inicio(this.app, this.contenedor, this.personaje);
+
+        this.inicio.mostrar();
+
+        this.controles();
+        
+    }
+
+    controles(){
+        window.addEventListener('keydown', (event) => {
+            if (event.key === 'Enter') {
+                this.iniciar();
+                console.log('presionado');
+            }
+        });
+    }
+    
+    iniciar(){
+        if(!this.juegoIniciado){
+            this.inicio.quitar();
+            this.juegoIniciado = true;
+            this.cargar();
+        }
+    }
+
+    cargar(){
         this.grid = new Grid(this, 50);
 
         this.objetos = [];
@@ -48,32 +69,23 @@ class Juego {
         this.agregarObstaculo("piedra", 5);
         //this.agregarObstaculo("arbusto", 10);
         //this.agregarTesoros("tesoro", 3);
-        this.agregarEnemigos(100);
+        this.agregarEnemigos(150);
         //this.agregarMantis(10);
 
         this.iniciarElementos();
         this.iniciarEventos(); 
         
-        //
         this.personaje = new Personaje(200, 200, this, this.elementos, this.eventos);
         
         this.ponerListeners();
 
         //this.update();
 
-        //Mensaje de inicio
-
-        //this.inicio.mostrar();
-
-        //setTimeout(() => {
-        //    this.inicio.quitar();
-        //}, 3000);
-
         //this.app.ticker.add(() => this.update());
         setTimeout(() => {
             this.app.ticker.add(this.update.bind(this));
             window.__PIXI_APP__ = this.app;
-        }, 100);
+        }, 100); 
     }
 
     agregarFondo() {
@@ -117,8 +129,7 @@ class Juego {
         }
 
     }
-   
-    
+      
    /* agregarTesoros(tipo, cantidad){
         if (tipo === "tesoro") {
             for (let i = 0; i < cantidad; i++) {
@@ -154,11 +165,9 @@ class Juego {
             ); 
             this.mantis.push(m); 
             this.objetos.push(m);
-
         }
     }
 
-        
 
     iniciarElementos(){
         this.elementos = new Elementos(this.app, this.contenedor, this); 
@@ -166,7 +175,6 @@ class Juego {
 
     iniciarEventos(){
         this.eventos = new Eventos(this.app, this.contenedor, this.personaje);
-        this.inicio = new Inicio(this.app, this.contenedor, this.personaje);
         this.win = new Win(this.app, this.contenedor, this.personaje);
         this.gameOver = new GameOver(this.app, this.contenedor, this.personaje);
     }
@@ -199,14 +207,12 @@ class Juego {
         //if (this.pausa) return;
         this.contadorDeFrame++;
 
-        if (this.elementos.indicadorDeLuz) {  // Verifica que 'indicadorDeLuz' esté definido
-            this.elementos.indicadorDeLuz.verificarEstado();  // Ahora puedes llamar al método
+        if (this.elementos.indicadorDeLuz) {  
+            this.elementos.indicadorDeLuz.verificarEstado(); 
         } else {
-            console.error('IndicadorDeLuz no está definido correctamente');
+           // console.error('IndicadorDeLuz no esta definido correctamente');
         }
        
-        
-        //FALTABA HACERLE UPDATE AL PERSONAJE
         this.personaje.actualizar();
         // this.personaje.render()
 
@@ -228,28 +234,7 @@ class Juego {
     }
 
     
-   /* actualizarCamara() {
-        // Posicion de la camara
-        const targetX = -this.personaje.contenedorObjeto.x + window.innerWidth / 2;
-        const targetY = -this.personaje.contenedorObjeto.y + window.innerHeight / 2;
-    
-        // LERP 
-        this.contenedor.x = lerp(this.contenedor.x, targetX, this.lerpSpeed);
-        this.contenedor.y = lerp(this.contenedor.y, targetY, this.lerpSpeed);
-    
-        // Bordes
-        if (this.contenedor.x > 0) this.contenedor.x = 0;
-        if (this.contenedor.y > 0) this.contenedor.y = 0;
-    
-        //Limitar el movimiento en el eje X e Y para que no salga de la escena
-        const maxX = Math.max(0, this.personaje.contenedorObjeto.x - window.innerWidth /*+this.personaje.contenedorObjeto.width */ //);
-       // const maxY = Math.max(0, this.personaje.contenedorObjeto.y - window.innerHeight /* this.personaje.contenedorObjeto.height */);
-    
-        //if (this.contenedor.x < -maxX) this.contenedor.x = -maxX;
-        //if (this.contenedor.y < -maxY) this.contenedor.y = -maxY;
-   //}*/
-
-actualizarCamara() {
+ actualizarCamara() {
     // Posicion de la camara en el personaje
     const targetX = -this.personaje.contenedorObjeto.x + window.innerWidth / 2;
     const targetY = -this.personaje.contenedorObjeto.y + window.innerHeight / 2;
@@ -271,10 +256,8 @@ actualizarCamara() {
     if (this.contenedor.y > 0) this.contenedor.y = 0;
     if (this.contenedor.x < -maxX) this.contenedor.x = -maxX;
     if (this.contenedor.y < -maxY) this.contenedor.y = -maxY;
-}
+ }
 
-
-                      
     
 }
 
