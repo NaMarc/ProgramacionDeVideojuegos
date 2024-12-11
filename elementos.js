@@ -1,4 +1,4 @@
-
+console.log('hola');
 class Elementos { 
     constructor(app, contenedor, juego) {
         this.app = app;
