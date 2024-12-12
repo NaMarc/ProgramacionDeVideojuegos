@@ -96,6 +96,8 @@ class Objeto{
     }     
         
     ajustarPorBordes() {
+      //El los enemigos pasa los bordes del escenario por debajo y por derecha
+     
         let fuerza = new PIXI.Point(0, 0);
 
         let margen = this.juego.grid.tamanioCelda * 0.5;

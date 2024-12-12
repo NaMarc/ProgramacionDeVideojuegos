@@ -69,7 +69,7 @@ class Juego {
         this.agregarObstaculo("piedra", 5);
         //this.agregarObstaculo("arbusto", 10);
         //this.agregarTesoros("tesoro", 3);
-        this.agregarEnemigos(0);
+        this.agregarEnemigos(100);
         //this.agregarMantis(10);
 
         this.iniciarElementos();
@@ -235,6 +235,7 @@ class Juego {
 
 
     actualizarCamara() {
+
         // Posicion de la camara en el personaje
         const targetX = -this.personaje.contenedorObjeto.x + window.innerWidth / 2;
         const targetY = -this.personaje.contenedorObjeto.y + window.innerHeight / 2;

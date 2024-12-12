@@ -182,9 +182,9 @@ class Personaje extends Objeto {
             }
         }
 
-        this.velocidad.x += this.vecRepelerObs.x * 2;
-        this.velocidad.y += this.vecRepelerObs.y * 2;
-
+        //this.velocidad.x += this.vecRepelerObs.x * 2;
+        //this.velocidad.y += this.vecRepelerObs.y * 2;
+        this.calcularYAplicarFuerzas();
 
         this.contenedorObjeto.x += this.velocidad.x;
         this.contenedorObjeto.y += this.velocidad.y;
@@ -209,7 +209,8 @@ class Personaje extends Objeto {
 
 
     actualizar() {
-        this.vecRepelerObs = this.repelerObstaculos(this.obtenerVecinos(), 5000);
+        //this.vecRepelerObs = this.repelerObstaculos(this.obtenerVecinos(), 5000);
+
 
 
         // if (!this.listo) return;
@@ -237,11 +238,13 @@ class Personaje extends Objeto {
         //
         let fuerzas = new PIXI.Point(0, 0);
 
-        const repulsionAObstaculos = this.repelerObstaculos();
-        if (repulsionAObstaculos) {
+        const vecRepelerObs = this.repelerObstaculos(this.obtenerVecinos(), 5000);
 
-            fuerzas.x += repulsionAObstaculos.x;
-            fuerzas.y += repulsionAObstaculos.y;
+        // const repulsionAObstaculos = this.repelerObstaculos();
+        if (vecRepelerObs) {
+
+            fuerzas.x += vecRepelerObs.x * 2;
+            fuerzas.y += vecRepelerObs.y * 2;
         }
 
         const bordes = this.ajustarPorBordes();
@@ -260,12 +263,12 @@ class Personaje extends Objeto {
 
 
         // Limitar la velocidad máxima
-        const velocidadCuadrada = this.velocidad.x ** 2 + this.velocidad.y ** 2;
+        /*const velocidadCuadrada = this.velocidad.x ** 2 + this.velocidad.y ** 2;
         if (velocidadCuadrada > this.velMaxCuadrada) {
             const magnitud = Math.sqrt(velocidadCuadrada);
             this.velocidad.x = (this.velocidad.x / magnitud) * this.velMax;
             this.velocidad.y = (this.velocidad.y / magnitud) * this.velMax;
-        }
+        }*/
     }
 
     /*verificarEstadoDeSalud() {  
