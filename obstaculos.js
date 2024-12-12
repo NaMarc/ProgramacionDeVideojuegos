@@ -1,23 +1,25 @@
 
-class Obstaculo extends Objeto{
-    constructor(x, y, juego, imagenUrl) {
-        super(x, y ,0, juego)
-        this.tipo = "";
+class Obstaculo extends Objeto {
+    constructor(x, y, juego, imagenUrl, n1, n2) {
+        super(x, y, 0, juego)
+        this.tipo = ["arbol", "piedra"];
         this.debug = 0;
 
         //Textura- imagen
         this.textura = PIXI.Texture.from(imagenUrl);
         this.sprite = new PIXI.Sprite(this.textura);
-              
+
         // Obstáculo
-        this.radio = this.sprite.width * 0.5;
-        this.sprite.anchor.set(0.5/*, 0.82*/);
-      
+        // this.radio = this.sprite.width * 0.5;
+        this.sprite.pivot.set(n1, n2);
+        //this.posicionPivot();
+
+
         this.contenedorObjeto.addChild(this.sprite);
         this.actualizarZIndex();
-      
-        this.contenedorObjeto.pivot.set(this.sprite.width/2, this.sprite.height)
-        this.meterEnGrid();            
+
+        //this.contenedorObjeto.pivot.set(this.sprite.width / 2, this.sprite.height);
+        this.meterEnGrid();
     }
 
     meterEnGrid() {
@@ -42,6 +44,17 @@ class Obstaculo extends Objeto{
     }
 
 
-    actualizar() {super.actualizar(); }
-   
+    actualizar() { super.actualizar(); }
+
+    posicionPivot() {
+        if (this.tipo === "arbol") {
+            this.sprite.pivot.set(90, 200);
+        }
+        if (this.tipo === "piedra") {
+            this.sprite.pivot.set(50, 50);
+        }
+    }
+
+
+
 }

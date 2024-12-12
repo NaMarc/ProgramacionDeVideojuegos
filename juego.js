@@ -8,10 +8,10 @@ class Juego {
         this.app = new PIXI.Application({
             width: this.canvasWidth,
             height: this.canvasHeight,
-           // resizeTo: window,
-            backgroundColor: 0x000000,   
+            // resizeTo: window,
+            backgroundColor: 0x000000,
         });
-        
+
         document.body.appendChild(this.app.view);
 
         this.gridActualizacionIntervalo = 10; // Cada 10 frames
@@ -19,16 +19,16 @@ class Juego {
 
         this.contenedor = new PIXI.Container();
         this.contenedor.name = "contendor"
-        this.agregarFondo(); 
+        this.agregarFondo();
         this.app.stage.addChild(this.contenedor);
-        
+
         this.contenedor.sortableChildren = true;
 
         this.musica = new Howl({
-            src: ['assets/mystic-forest.ogg'], 
-            autoplay: true,  
-            loop: true,      
-            volume: 0.2     
+            src: ['assets/mystic-forest.ogg'],
+            autoplay: true,
+            loop: true,
+            volume: 0.2
         });
 
         this.inicio = new Inicio(this.app, this.contenedor, this.personaje);
@@ -36,10 +36,10 @@ class Juego {
         this.inicio.mostrar();
 
         this.controles();
-        
+
     }
 
-    controles(){
+    controles() {
         window.addEventListener('keydown', (event) => {
             if (event.key === 'Enter') {
                 this.iniciar();
@@ -47,17 +47,17 @@ class Juego {
             }
         });
     }
-    
-    iniciar(){
-        if(!this.juegoIniciado){
+
+    iniciar() {
+        if (!this.juegoIniciado) {
             this.inicio.quitar();
             this.juegoIniciado = true;
             this.cargar();
         }
     }
 
-    cargar(){
-        this.grid = new Grid(this, 50);
+    cargar() {
+        this.grid = new Grid(this, 200);
 
         this.objetos = [];
         this.obstaculos = [];
@@ -69,14 +69,14 @@ class Juego {
         this.agregarObstaculo("piedra", 5);
         //this.agregarObstaculo("arbusto", 10);
         //this.agregarTesoros("tesoro", 3);
-        this.agregarEnemigos(150);
+        this.agregarEnemigos(0);
         //this.agregarMantis(10);
 
         this.iniciarElementos();
-        this.iniciarEventos(); 
-        
+        this.iniciarEventos();
+
         this.personaje = new Personaje(200, 200, this, this.elementos, this.eventos);
-        
+
         this.ponerListeners();
 
         //this.update();
@@ -85,34 +85,34 @@ class Juego {
         setTimeout(() => {
             this.app.ticker.add(this.update.bind(this));
             window.__PIXI_APP__ = this.app;
-        }, 100); 
+        }, 100);
     }
 
     agregarFondo() {
         this.contenedorFondo = new PIXI.Container();
         this.textura = PIXI.Texture.from("Assets/Pasto3.png");
-        this.fondoSprite = new PIXI.TilingSprite(this.textura, this.app.view.width , this.app.view.height );
+        this.fondoSprite = new PIXI.TilingSprite(this.textura, this.app.view.width, this.app.view.height);
         this.contenedorFondo.addChild(this.fondoSprite);
         this.contenedor.addChild(this.contenedorFondo);
     }
-        
+
     agregarObstaculo(tipo, cantidad) {
         if (tipo === "arbol") {
             for (let i = 0; i < cantidad; i++) {
-                const arbol = (new Obstaculo(Math.random() * this.canvasWidth, 
-                Math.random() * this.canvasHeight, 
-                this,
-                "Assets/arbol3.png"));
+                const arbol = (new Obstaculo(Math.random() * this.canvasWidth,
+                    Math.random() * this.canvasHeight,
+                    this,
+                    "Assets/arbol3.png", 90, 200));
                 this.obstaculos.push(arbol);
                 this.objetos.push(arbol);
             }
         }
         if (tipo === "piedra") {
             for (let i = 0; i < cantidad; i++) {
-                const piedra = (new Obstaculo(Math.random() * this.canvasWidth, 
-                Math.random() * this.canvasHeight, 
-                this,
-                "Assets/roca2.png"));
+                const piedra = (new Obstaculo(Math.random() * this.canvasWidth,
+                    Math.random() * this.canvasHeight,
+                    this,
+                    "Assets/roca2.png", 30, 25));
                 this.obstaculos.push(piedra);
                 this.objetos.push(piedra);
             }
@@ -120,25 +120,25 @@ class Juego {
         if (tipo === "arbusto") {
             for (let i = 0; i < cantidad; i++) {
                 const arbusto = (new Obstaculo(Math.random() * this.canvasWidth,
-                Math.random() * this.canvasHeight,
-                this,
-                "Assets/arbusto.png"));
+                    Math.random() * this.canvasHeight,
+                    this,
+                    "Assets/arbusto.png"));
                 this.obstaculos.push(arbusto);
                 this.objetos.push(arbusto);
             }
         }
 
     }
-      
-   /* agregarTesoros(tipo, cantidad){
-        if (tipo === "tesoro") {
-            for (let i = 0; i < cantidad; i++) {
-                const tesoro = (new Tesoro(Math.random() * this.ancho, Math.random() * this.alto, this, "Assets/tesoro.png"));
-                this.tesoro.push(tesoro);
-                this.objetos.push(tesoro);
-            }
-        }
-    }*/
+
+    /* agregarTesoros(tipo, cantidad){
+         if (tipo === "tesoro") {
+             for (let i = 0; i < cantidad; i++) {
+                 const tesoro = (new Tesoro(Math.random() * this.ancho, Math.random() * this.alto, this, "Assets/tesoro.png"));
+                 this.tesoro.push(tesoro);
+                 this.objetos.push(tesoro);
+             }
+         }
+     }*/
 
     agregarEnemigos(cant) {
         for (let i = 0; i < cant; i++) {
@@ -148,8 +148,8 @@ class Juego {
                 Math.random() * this.canvasHeight,
                 velocidad,
                 this
-            ); 
-            this.enemigo.push(mosquito); 
+            );
+            this.enemigo.push(mosquito);
             this.objetos.push(mosquito);
         }
     }
@@ -162,38 +162,38 @@ class Juego {
                 Math.random() * this.canvasHeight,
                 velocidad,
                 this
-            ); 
-            this.mantis.push(m); 
+            );
+            this.mantis.push(m);
             this.objetos.push(m);
         }
     }
 
 
-    iniciarElementos(){
-        this.elementos = new Elementos(this.app, this.contenedor, this); 
+    iniciarElementos() {
+        this.elementos = new Elementos(this.app, this.contenedor, this);
     }
 
-    iniciarEventos(){
+    iniciarEventos() {
         this.eventos = new Eventos(this.app, this.contenedor, this.personaje);
         this.win = new Win(this.app, this.contenedor, this.personaje);
         this.gameOver = new GameOver(this.app, this.contenedor, this.personaje);
     }
 
-    condicionDeVictoria(){
-        if(this.elementos.temporizador && this.elementos.temporizador.tiempoAgotado){
+    condicionDeVictoria() {
+        if (this.elementos.temporizador && this.elementos.temporizador.tiempoAgotado) {
             this.win.mostrar();
             this.app.ticker.stop();
         }
     }
 
-    condicionDeDerrota(){
-        if (this.personaje.vidas === 0){
+    condicionDeDerrota() {
+        if (this.personaje.vidas === 0) {
             this.gameOver.mostrar();
-            this.app.ticker.stop();         
-        } 
+            this.app.ticker.stop();
+        }
     }
 
-    ponerListeners(){
+    ponerListeners() {
         window.addEventListener("resize", () => {
             this.app.renderer.resize(window.innerWidth, window.innerHeight);
         });
@@ -207,58 +207,58 @@ class Juego {
         //if (this.pausa) return;
         this.contadorDeFrame++;
 
-        if (this.elementos.indicadorDeLuz) {  
-            this.elementos.indicadorDeLuz.verificarEstado(); 
+        if (this.elementos.indicadorDeLuz) {
+            this.elementos.indicadorDeLuz.verificarEstado();
         } else {
-           // console.error('IndicadorDeLuz no esta definido correctamente');
+            // console.error('IndicadorDeLuz no esta definido correctamente');
         }
-       
+
         this.personaje.actualizar();
         // this.personaje.render()
 
-       for (let enemigo of this.enemigo) {
+        for (let enemigo of this.enemigo) {
             enemigo.actualizar();
             // objeto.render();
 
         }
         //** */
-       for (let obstaculos of this.obstaculos) {
+        for (let obstaculos of this.obstaculos) {
             obstaculos.actualizar();
             // objeto.render();    
         }
 
         //this.condicionDeDerrota();
-        this.condicionDeVictoria();
+        //this.condicionDeVictoria();
 
-        this.actualizarCamara();    
+        this.actualizarCamara();
     }
 
-    
- actualizarCamara() {
-    // Posicion de la camara en el personaje
-    const targetX = -this.personaje.contenedorObjeto.x + window.innerWidth / 2;
-    const targetY = -this.personaje.contenedorObjeto.y + window.innerHeight / 2;
 
-    //Lerp
-    this.contenedor.x = lerp(this.contenedor.x, targetX, this.lerpSpeed);
-    this.contenedor.y = lerp(this.contenedor.y, targetY, this.lerpSpeed);
+    actualizarCamara() {
+        // Posicion de la camara en el personaje
+        const targetX = -this.personaje.contenedorObjeto.x + window.innerWidth / 2;
+        const targetY = -this.personaje.contenedorObjeto.y + window.innerHeight / 2;
 
-    // Limites de la escena
-    const sceneWidth = this.canvasWidth;  
-    const sceneHeight = this.canvasHeight;  
+        //Lerp
+        this.contenedor.x = lerp(this.contenedor.x, targetX, this.lerpSpeed);
+        this.contenedor.y = lerp(this.contenedor.y, targetY, this.lerpSpeed);
 
-    // Limites de la camara
-    const maxX = Math.max(0, sceneWidth - window.innerWidth);  
-    const maxY = Math.max(0, sceneHeight - window.innerHeight);  
+        // Limites de la escena
+        const sceneWidth = this.canvasWidth;
+        const sceneHeight = this.canvasHeight;
 
-    //No se mueve fuera de los limites
-    if (this.contenedor.x > 0) this.contenedor.x = 0;
-    if (this.contenedor.y > 0) this.contenedor.y = 0;
-    if (this.contenedor.x < -maxX) this.contenedor.x = -maxX;
-    if (this.contenedor.y < -maxY) this.contenedor.y = -maxY;
- }
+        // Limites de la camara
+        const maxX = Math.max(0, sceneWidth - window.innerWidth);
+        const maxY = Math.max(0, sceneHeight - window.innerHeight);
 
-    
+        //No se mueve fuera de los limites
+        if (this.contenedor.x > 0) this.contenedor.x = 0;
+        if (this.contenedor.y > 0) this.contenedor.y = 0;
+        if (this.contenedor.x < -maxX) this.contenedor.x = -maxX;
+        if (this.contenedor.y < -maxY) this.contenedor.y = -maxY;
+    }
+
+
 }
 
 

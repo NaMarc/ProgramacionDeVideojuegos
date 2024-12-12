@@ -151,11 +151,11 @@ class Objeto{
         return vecFuerza;
       }*/
 
-        repelerObstaculos(vecinos) {
+        repelerObstaculos(vecinos, umbralDistancia = 10000) {
             const vecFuerza = new PIXI.Point(0, 0);
             let cant = 0;
           
-            const umbralDistancia = 10000;  
+            //const umbralDistancia = 10000;  
       
             vecinos.forEach((cosa) => {
               if (cosa instanceof Obstaculo) {
