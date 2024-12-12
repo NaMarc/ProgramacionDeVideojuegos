@@ -6,8 +6,8 @@ class Elementos {
         this.juego = juego;
         
         this.barraDeVida = new BarraDeVida(this.app, 50, 20);
-        this.temporizador = new Temporalizador(this.app, 1099, 80, 60, this.juego); /**Cambiar tiempo inicial a 180 */
-        this.contador = new Contador(this.app, 1099, 180 ); //Quitar? Contador de bichos muertos
+        this.temporizador = new Temporalizador(this.app, window.innerWidth - 90 /*1099*/, 80, 60, this.juego); /**Cambiar tiempo inicial a 180 */
+        this.contador = new Contador(this.app, window.innerWidth - 90, 180 ); //Quitar? Contador de bichos muertos
         this.indicadorDeLuz = new IndicadorDeLuz(this.app, 77, 68, this.juego);
     }
 
@@ -121,13 +121,13 @@ class Contador{
         this.crearCirculoContador(x, y); 
 
         const mosca = PIXI.Sprite.from('assets/MM.png');  
-        mosca.x = 1060;
+        mosca.x = window.innerWidth -120;
         mosca.y = 172;
         mosca.scale.set(0.03);
         this.app.stage.addChild(mosca); 
 
         const indicador = PIXI.Sprite.from('assets/indicador.png');  
-        indicador.x = 1057;
+        indicador.x = window.innerWidth - 130;
         indicador.y = 140;
         indicador.scale.set(0.65);
         this.app.stage.addChild(indicador);  
@@ -154,7 +154,7 @@ class Contador{
 
         //Centrar en el circulo
         //textoPixi.anchor.set(0.5); 
-        textoPixi.x = 1095; 
+        textoPixi.x = window.innerWidth - 88; 
         textoPixi.y = 165; 
 
         this.app.stage.addChild(textoPixi); 

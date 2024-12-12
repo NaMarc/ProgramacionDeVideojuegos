@@ -1,5 +1,3 @@
-//Moscas
-
 class Enemigo extends Objeto {
     constructor(x, y, velMax, juego) {
         super(x, y,velMax, juego);
@@ -26,6 +24,12 @@ class Enemigo extends Objeto {
 
         //var animacion
         this.animacion = this.cargarSpriteAnimado("Assets/Moscas/moscas.json", "CaminaAbajo");
+
+        const debugPoint = new PIXI.Graphics();
+        debugPoint.beginFill(0xff0000);
+        debugPoint.drawCircle(0, 0, 5);
+        debugPoint.endFill();
+        this.contenedorObjeto.addChild(debugPoint);
        
     }
   
@@ -78,8 +82,6 @@ class Enemigo extends Objeto {
         sumaDeVectores.y += (bordes || {}).y || 0;
         sumaDeVectores.y += (vecRepulsionAObstaculos || {}).y || 0;
 
-        //console.log("VecRepulsionAObstaculos: ", vecRepulsionAObstaculos);
-    
         this.aplicarFuerza(sumaDeVectores);
       }
 
@@ -87,19 +89,13 @@ class Enemigo extends Objeto {
 
       this.verificarEstadoDeVida();
       this.atacar();
-      
-      //this.ajustarPorBordes();
 
-      //if (!this.listo) return;
-
-      // if (this.juego.contadorDeFrames % this.equipoParaUpdate == 0) {
-          this.mirarAlrededor();
-          this.segunDatosCambiarDeEstado();
-          this.hacerCosasSegunEstado();
+      this.mirarAlrededor();
+      this.segunDatosCambiarDeEstado();
+      this.hacerCosasSegunEstado();
            
-      //}
       this.calcularAngulo();
-      //this.contenedorObjeto.rotation = this.angulo;
+      
       this.ajustarSpriteSegunAngulo();
     
       this.contenedorObjeto.x += this.velocidad.x;
@@ -282,15 +278,53 @@ class Enemigo extends Objeto {
       }
        
 
-      verificarEstadoDeVida(){
+      /*verificarEstadoDeVida(){
         if(this.miCeldaActual == this.juego.personaje.miCeldaActual 
           && this.juego.personaje.estadoAtacando){
           this.recibirAtaque()
         }
-      }
+      }*/
 
-      atacar(){
+      /*atacar(){
         if(this.miCeldaActual == this.juego.personaje.miCeldaActual && this.estados.ATACAR){
+          if(this.puedeAtacar){
+            this.juego.personaje.vidas -= 10;
+      
+            this.puedeAtacar = false;
+
+            setTimeout(() => {
+              this.puedeAtacar = true;
+            }, 2000);
+            console.log('Es atacado. Vidas del personaje:', this.juego.personaje.vidas);
+
+          }else {
+            //console.log('todavia no puede volver a atacar')
+          }
+        }
+      }*/
+
+      verificarEstadoDeVida(){
+        const distCuadrada = distanciaAlCuadrado(
+          this.contenedorObjeto.x,
+          this.contenedorObjeto.y,
+          this.juego.personaje.contenedorObjeto.x,
+          this.juego.personaje.contenedorObjeto.y
+        );
+        if( distCuadrada <= 64
+          && this.juego.personaje.estadoAtacando){
+          this.recibirAtaque()
+        }
+      }
+      atacar(){
+          const distCuadrada = distanciaAlCuadrado(
+            this.contenedorObjeto.x,
+            this.contenedorObjeto.y,
+            this.juego.personaje.contenedorObjeto.x,
+            this.juego.personaje.contenedorObjeto.y
+          );
+
+        if(distCuadrada <= 64 && this.estados.ATACAR){
+          //console.log('Dist:', distCuadrada)
           if(this.puedeAtacar){
             this.juego.personaje.vidas -= 10;
       
@@ -309,29 +343,5 @@ class Enemigo extends Objeto {
            
 }
 
- /*normalizarVelocidad() {
-        if (this.velocidad.x == 0 && this.velocidad.y == 0) {
-          return;
-        }
-    
-        let magnitud = calculoDeDistanciaRapido(
-          0,
-          0,
-          this.velocidad.x,
-          this.velocidad.y
-        );
-    
-        if (magnitud == 0) return;
-    
-        this.velocidad.x /= magnitud;
-        this.velocidad.y /= magnitud;
-    
-        this.velocidad.x *= this.velocidadMax;
-        this.velocidad.y *= this.velocidadMax;
-        if (isNaN(this.velocidad.x) || isNaN(this.velocidad.y)) {
-          
-        }
-        
-      }*/
 
   

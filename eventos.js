@@ -85,11 +85,29 @@ class GameOver extends Eventos {
         this.crearTexto('GAME OVER', 'red');
     }
 }
-//cambiar por imagen
+
 class Inicio extends Eventos{
     constructor(app, contenedor, personaje) {
         super(app, contenedor, personaje); 
-        this.crearTexto('Insectario \n Usa WASD para moverte \n Barra de espacio para  \n prender la luz o  apagar \n F para atacar\n Presiona enter para seguir ', 'black');
+        const intro = PIXI.Sprite.from('assets/msj.png');  
+        intro.x = window.innerWidth  / 5;
+        intro.y = window.innerHeight / 8;
+        
+        intro.scale.set(0.4);
+        this.app.stage.addChild(intro);
+        this.intro = intro;
+         this.intro.pivot.set(0.5, 0.5);
+    }
+
+    mostrar() {
+        if (!this.mensajeMostrado) { 
+            this.mensajeMostrado = true;  
+        }
+    }
+
+    quitar(){
+        this.app.stage.removeChild(this.intro);
+        this.mensajeMostrado = false;      
     }
 
 

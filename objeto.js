@@ -96,15 +96,13 @@ class Objeto{
     }     
         
     ajustarPorBordes() {
-      //El los enemigos pasa los bordes del escenario por debajo y por derecha
-     
         let fuerza = new PIXI.Point(0, 0);
 
         let margen = this.juego.grid.tamanioCelda * 0.5;
-        let limiteDerecho = this.juego.ancho - margen;
+        let limiteDerecho = this.juego.canvasWidth - margen;
         let limiteIzquierdo = margen;
         let limiteArriba = margen;
-        let limiteAbajo = this.juego.alto - margen;
+        let limiteAbajo = this.juego.canvasHeight - margen;
 
         let cuantaFuerza = 1;
 
@@ -115,125 +113,75 @@ class Objeto{
 
         return fuerza;
     }
-//
-    /*repelerObstaculos(vecinos) {
+    
+    repelerObstaculos(vecinos, umbralDistancia = 10000) {
         const vecFuerza = new PIXI.Point(0, 0);
         let cant = 0;
+          
+        //const umbralDistancia = 10000;  
+      
         vecinos.forEach((cosa) => {
           if (cosa instanceof Obstaculo) {
-            const distCuadrada = distanciaAlCuadrado(
-              this.contenedorObjeto.x,
-              this.contenedorObjeto.y,
-              cosa.contenedorObjeto.x,
-              cosa.contenedorObjeto.y 
-            );
-    
-            if (distCuadrada < cosa.radio ** 2) {
-              //SI ESTA A MENOS DE UNA CELDA DE DIST
-              const dif = new PIXI.Point(
-                this.contenedorObjeto.x - cosa.contenedorObjeto.x,
-                this.contenedorObjeto.y - cosa.contenedorObjeto.y   
-              );
-              dif.x /= distCuadrada;
-              dif.y /= distCuadrada;
-              vecFuerza.x += dif.x;
-              vecFuerza.y += dif.y;
-              cant++;
-              
-            }
-          }
-        });
-        if (cant) {
-          vecFuerza.x *= 40;
-          vecFuerza.y *= 40;
-          // vecFuerza.x += -this.velocidad.x;
-           //vecFuerza.y += -this.velocidad.y;
-        }
-    
-        return vecFuerza;
-      }*/
-
-        repelerObstaculos(vecinos, umbralDistancia = 10000) {
-            const vecFuerza = new PIXI.Point(0, 0);
-            let cant = 0;
-          
-            //const umbralDistancia = 10000;  
-      
-            vecinos.forEach((cosa) => {
-              if (cosa instanceof Obstaculo) {
                 
-                const distCuadrada = distanciaAlCuadrado(
-                  this.contenedorObjeto.x,
-                  this.contenedorObjeto.y,
-                  cosa.contenedorObjeto.x,
-                  cosa.contenedorObjeto.y
-                );
+            const distCuadrada = distanciaAlCuadrado(
+                this.contenedorObjeto.x,
+                this.contenedorObjeto.y,
+                cosa.contenedorObjeto.x,
+                cosa.contenedorObjeto.y
+            );
           
-                //console.log(`Distancia al cuadrado: ${distCuadrada}, Radio del obstáculo: ${cosa.radio}`);
+          // Comparar con el umbral de distancia en lugar de radio al cuadrado
+              if (distCuadrada < umbralDistancia) {
+                // Dirección de la repulsión
+                const dif = new PIXI.Point(
+                  this.contenedorObjeto.x - cosa.contenedorObjeto.x,
+                  this.contenedorObjeto.y - cosa.contenedorObjeto.y
+          );
           
-                // Comparar con el umbral de distancia en lugar de radio al cuadrado
-                if (distCuadrada < umbralDistancia) {
-                  // Dirección de la repulsión
-                  const dif = new PIXI.Point(
-                    this.contenedorObjeto.x - cosa.contenedorObjeto.x,
-                    this.contenedorObjeto.y - cosa.contenedorObjeto.y
-                  );
+          // Calcula la magnitud del vector de diferencia
+          const magnitud = Math.sqrt(dif.x * dif.x + dif.y * dif.y);
           
-                  //console.log(`Dirección de repulsión (antes de normalizar): (${dif.x}, ${dif.y})`);
-          
-                  // Calcula la magnitud del vector de diferencia
-                  const magnitud = Math.sqrt(dif.x * dif.x + dif.y * dif.y);
-          
-                  // Normaliza el vector de diferencia si la magnitud es mayor que cero
-                  if (magnitud !== 0) {
-                    dif.x /= magnitud;
-                    dif.y /= magnitud;
-                  } else {
-                    //console.log("Magnitud es cero, no se normaliza");
-                  }
-          
-                  //console.log(`Dirección de repulsión (después de normalizar): (${dif.x}, ${dif.y})`);
-          
-                  // Aplica la fuerza de repulsión inversamente proporcional a la distancia
-                  let fuerzaRepulsion = 1 / distCuadrada; // Inversamente proporcional a la distancia
-          
-                  // Limita la fuerza para evitar valores muy pequeños
-                  fuerzaRepulsion = Math.max(fuerzaRepulsion, 0.01);  
-          
-                  //console.log(`Fuerza de repulsión calculada antes de multiplicar por escala: ${fuerzaRepulsion}`);
-          
-                  // Aumenta la fuerza de repulsión 
-                  dif.x *= fuerzaRepulsion * 1000; 
-                  dif.y *= fuerzaRepulsion * 1000;  
-          
-                  //  console.log(`Fuerza de repulsión final aplicada: (${dif.x}, ${dif.y})`);
-          
-                  // 
-                  vecFuerza.x += dif.x;
-                  vecFuerza.y += dif.y;
-          
-                  cant++;
-                }
-              }
-            });
-
-            if (cant) {
-              //console.log(`Fuerza total de repulsión acumulada: (${vecFuerza.x}, ${vecFuerza.y})`);
-              vecFuerza.x *= 1;  
-              vecFuerza.y *= 1;  
+          // Normaliza el vector de diferencia si la magnitud es mayor que cero
+            if (magnitud !== 0) {
+              dif.x /= magnitud;
+              dif.y /= magnitud;
+            } else {
+              //console.log("Magnitud es cero, no se normaliza");
             }
+      
+            // Aplica la fuerza de repulsión inversamente proporcional a la distancia
+            let fuerzaRepulsion = 1 / distCuadrada; // Inversamente proporcional a la distancia
           
-            //console.log(`Fuerza final de repulsión : (${vecFuerza.x}, ${vecFuerza.y})`);
+            // Limita la fuerza para evitar valores muy pequeños
+            fuerzaRepulsion = Math.max(fuerzaRepulsion, 0.01);  
           
-            return vecFuerza;
+            //console.log(`Fuerza de repulsión calculada antes de multiplicar por escala: ${fuerzaRepulsion}`);
+          
+            // Aumenta la fuerza de repulsión 
+            dif.x *= fuerzaRepulsion * 1000; 
+            dif.y *= fuerzaRepulsion * 1000;  
+          
+            //  console.log(`Fuerza de repulsión final aplicada: (${dif.x}, ${dif.y})`);
+          
+            // 
+            vecFuerza.x += dif.x;
+            vecFuerza.y += dif.y;
+          
+            cant++;
+            }
+        }
+        });
+
+          if (cant) {
+            //console.log(`Fuerza total de repulsión acumulada: (${vecFuerza.x}, ${vecFuerza.y})`);
+            vecFuerza.x *= 1;  
+            vecFuerza.y *= 1;  
           }
           
+        //console.log(`Fuerza final de repulsión : (${vecFuerza.x}, ${vecFuerza.y})`);
           
-          
-        
-          
-          
-          
+        return vecFuerza;
+      }    
    
     actualizarPosicionEnGrid() {this.juego.grid.update(this);}
 
@@ -243,12 +191,5 @@ class Objeto{
         this.actualizarZIndex();
         this.actualizarPosicionEnGrid();
     }
-
-    // render() {
-    //     //this.contenedorObjeto.rotation = this.angulo;
-    //     this.contenedorObjeto.x = this.x;
-    //     this.contenedorObjeto.y = this.y;
-    // }
-
 
 }

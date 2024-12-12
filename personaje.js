@@ -293,7 +293,7 @@ class Personaje extends Objeto {
             } else if (this.vidas === 100) {
                 this.juego.elementos.perderVida();
                 this.perdioVida = true;
-            } else if (this.vidas === 0) {
+            } else if (this.vidas <= 0) {
                 this.juego.elementos.perderVida();
                 this.juego.condicionDeDerrota();
                 this.perdioVida = true;
