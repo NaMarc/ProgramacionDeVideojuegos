@@ -1,5 +1,5 @@
-class Objeto{
-    constructor(x, y,velocidadMax, juego){
+class Objeto {
+    constructor(x, y, velocidadMax, juego) {
         this.id = randomID(8);
         this.juego = juego;
         this.grid = juego.grid;
@@ -14,13 +14,13 @@ class Objeto{
         this.velocidad = new PIXI.Point(0, 0);
         this.velocidadMax = velocidadMax;
         this.velocidadMaxCuadrada = velocidadMax * velocidadMax;
-       
-        this.spriteCargado = false; 
-        this.animacionActual = ""; 
-        this.texturasCargadas = {}; 
+
+        this.spriteCargado = false;
+        this.animacionActual = "";
+        this.texturasCargadas = {};
     }
 
-//ANIMACION
+    //ANIMACION
     async cargarSpriteAnimado(jsonPath, animName) {
         if (this.animacionActual === animName) return; // Evitar recargar la misma animación
 
@@ -38,7 +38,7 @@ class Objeto{
             } else {
                 this.sprite = new PIXI.AnimatedSprite(this.texturasCargadas[jsonPath][animName]);
                 this.sprite.animationSpeed = 0.1;
-                this.sprite.loop = true; 
+                this.sprite.loop = true;
                 this.sprite.play();
 
                 this.contenedorObjeto.addChild(this.sprite);
@@ -50,7 +50,7 @@ class Objeto{
                 if (this instanceof Personaje) {
                     this.sprite.scale.set(4);
                 };
-    
+
             }
 
             // Actualizar el estado de la animación actual
@@ -77,7 +77,7 @@ class Objeto{
                     vecinos = [
                         ...vecinos,
                         ...Object.values(celda.objetosAca).filter(
-                            (k) => k != this 
+                            (k) => k != this
                         ),
                     ];
                 }
@@ -91,17 +91,17 @@ class Objeto{
             this.miCeldaActual &&
             fulano.miCeldaActual &&
             fulano.miCeldaActual == this.miCeldaActual
-            
+
         );
-    }     
-        
+    }
+
     ajustarPorBordes() {
         let fuerza = new PIXI.Point(0, 0);
 
         let margen = this.juego.grid.tamanioCelda * 0.5;
         let limiteDerecho = this.juego.canvasWidth - margen;
-        let limiteIzquierdo = margen;
-        let limiteArriba = margen;
+        let limiteIzquierdo = margen - 90;
+        let limiteArriba = margen - 90;
         let limiteAbajo = this.juego.canvasHeight - margen;
 
         let cuantaFuerza = 1;
@@ -111,83 +111,101 @@ class Objeto{
         if (this.contenedorObjeto.x > limiteDerecho) fuerza.x = -cuantaFuerza;
         if (this.contenedorObjeto.y > limiteAbajo) fuerza.y = -cuantaFuerza;
 
+        if (this instanceof Personaje) {
+
+            if (this.contenedorObjeto.x < limiteIzquierdo) {
+                this.contenedorObjeto.x = limiteIzquierdo; // Asegura que no cruce el límite izquierdo
+            }
+            if (this.contenedorObjeto.x > limiteDerecho) {
+                this.contenedorObjeto.x = limiteDerecho; // Asegura que no cruce el límite derecho
+            }
+
+            // Control para el eje Y (arriba y abajo)
+            if (this.contenedorObjeto.y < limiteArriba) {
+                this.contenedorObjeto.y = limiteArriba; // Asegura que no cruce el límite superior
+            }
+            if (this.contenedorObjeto.y > limiteAbajo) {
+                this.contenedorObjeto.y = limiteAbajo; // Asegura que no cruce el límite inferior
+            }
+        }
+
         return fuerza;
     }
-    
+
     repelerObstaculos(vecinos, umbralDistancia = 10000) {
         const vecFuerza = new PIXI.Point(0, 0);
         let cant = 0;
-          
+
         //const umbralDistancia = 10000;  
-      
+
         vecinos.forEach((cosa) => {
-          if (cosa instanceof Obstaculo) {
-                
-            const distCuadrada = distanciaAlCuadrado(
-                this.contenedorObjeto.x,
-                this.contenedorObjeto.y,
-                cosa.contenedorObjeto.x,
-                cosa.contenedorObjeto.y
-            );
-          
-          // Comparar con el umbral de distancia en lugar de radio al cuadrado
-              if (distCuadrada < umbralDistancia) {
-                // Dirección de la repulsión
-                const dif = new PIXI.Point(
-                  this.contenedorObjeto.x - cosa.contenedorObjeto.x,
-                  this.contenedorObjeto.y - cosa.contenedorObjeto.y
-          );
-          
-          // Calcula la magnitud del vector de diferencia
-          const magnitud = Math.sqrt(dif.x * dif.x + dif.y * dif.y);
-          
-          // Normaliza el vector de diferencia si la magnitud es mayor que cero
-            if (magnitud !== 0) {
-              dif.x /= magnitud;
-              dif.y /= magnitud;
-            } else {
-              //console.log("Magnitud es cero, no se normaliza");
+            if (cosa instanceof Obstaculo) {
+
+                const distCuadrada = distanciaAlCuadrado(
+                    this.contenedorObjeto.x,
+                    this.contenedorObjeto.y,
+                    cosa.contenedorObjeto.x,
+                    cosa.contenedorObjeto.y
+                );
+
+                // Comparar con el umbral de distancia en lugar de radio al cuadrado
+                if (distCuadrada < umbralDistancia) {
+                    // Dirección de la repulsión
+                    const dif = new PIXI.Point(
+                        this.contenedorObjeto.x - cosa.contenedorObjeto.x,
+                        this.contenedorObjeto.y - cosa.contenedorObjeto.y
+                    );
+
+                    // Calcula la magnitud del vector de diferencia
+                    const magnitud = Math.sqrt(dif.x * dif.x + dif.y * dif.y);
+
+                    // Normaliza el vector de diferencia si la magnitud es mayor que cero
+                    if (magnitud !== 0) {
+                        dif.x /= magnitud;
+                        dif.y /= magnitud;
+                    } else {
+                        //console.log("Magnitud es cero, no se normaliza");
+                    }
+
+                    // Aplica la fuerza de repulsión inversamente proporcional a la distancia
+                    let fuerzaRepulsion = 1 / distCuadrada; // Inversamente proporcional a la distancia
+
+                    // Limita la fuerza para evitar valores muy pequeños
+                    fuerzaRepulsion = Math.max(fuerzaRepulsion, 0.01);
+
+                    //console.log(`Fuerza de repulsión calculada antes de multiplicar por escala: ${fuerzaRepulsion}`);
+
+                    // Aumenta la fuerza de repulsión 
+                    dif.x *= fuerzaRepulsion * 1000;
+                    dif.y *= fuerzaRepulsion * 1000;
+
+                    //  console.log(`Fuerza de repulsión final aplicada: (${dif.x}, ${dif.y})`);
+
+                    // 
+                    vecFuerza.x += dif.x;
+                    vecFuerza.y += dif.y;
+
+                    cant++;
+                }
             }
-      
-            // Aplica la fuerza de repulsión inversamente proporcional a la distancia
-            let fuerzaRepulsion = 1 / distCuadrada; // Inversamente proporcional a la distancia
-          
-            // Limita la fuerza para evitar valores muy pequeños
-            fuerzaRepulsion = Math.max(fuerzaRepulsion, 0.01);  
-          
-            //console.log(`Fuerza de repulsión calculada antes de multiplicar por escala: ${fuerzaRepulsion}`);
-          
-            // Aumenta la fuerza de repulsión 
-            dif.x *= fuerzaRepulsion * 1000; 
-            dif.y *= fuerzaRepulsion * 1000;  
-          
-            //  console.log(`Fuerza de repulsión final aplicada: (${dif.x}, ${dif.y})`);
-          
-            // 
-            vecFuerza.x += dif.x;
-            vecFuerza.y += dif.y;
-          
-            cant++;
-            }
-        }
         });
 
-          if (cant) {
+        if (cant) {
             //console.log(`Fuerza total de repulsión acumulada: (${vecFuerza.x}, ${vecFuerza.y})`);
-            vecFuerza.x *= 1;  
-            vecFuerza.y *= 1;  
-          }
-          
+            vecFuerza.x *= 1;
+            vecFuerza.y *= 1;
+        }
+
         //console.log(`Fuerza final de repulsión : (${vecFuerza.x}, ${vecFuerza.y})`);
-          
+
         return vecFuerza;
-      }    
-   
-    actualizarPosicionEnGrid() {this.juego.grid.update(this);}
+    }
 
-    actualizarZIndex() {this.contenedorObjeto.zIndex = Math.floor(this.contenedorObjeto.y);}
+    actualizarPosicionEnGrid() { this.juego.grid.update(this); }
 
-    actualizar(){
+    actualizarZIndex() { this.contenedorObjeto.zIndex = Math.floor(this.contenedorObjeto.y); }
+
+    actualizar() {
         this.actualizarZIndex();
         this.actualizarPosicionEnGrid();
     }

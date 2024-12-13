@@ -248,6 +248,7 @@ class Personaje extends Objeto {
         }
 
         const bordes = this.ajustarPorBordes();
+
         fuerzas.x += bordes.x;
         fuerzas.y += bordes.y;
 
