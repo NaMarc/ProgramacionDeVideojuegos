@@ -3,19 +3,20 @@ class Tesoro extends Objeto {
         super(x, y, 0, juego)
         this.tipo = "";
         this.grid = this.juego.grid;
+        this.estaEnJuego = true;
 
 
         this.textura = PIXI.Texture.from(imagenUrl);
         this.sprite = new PIXI.Sprite(this.textura);
 
-        this.radio = 80;
+        //this.radio = 80;
         //this.sprite.sc
 
         this.contenedorObjeto.addChild(this.sprite);
         this.sprite.scale.set(0.5);
 
-        //this.contenedorObjeto.pivot.set(this.sprite.width / 2, this.sprite.height)
-        this.encontrarTesoro();
+        //this.spite.pivot.set( / 2, this.sprite.height)
+        //this.encontrarTesoro();
         this.actualizarZIndex();
 
     }
@@ -25,8 +26,6 @@ class Tesoro extends Objeto {
         super.actualizar();
     }
 
-
-
     encontrarTesoro() {
         const distCuadrada = distanciaAlCuadrado(
             this.contenedorObjeto.x,
@@ -35,14 +34,16 @@ class Tesoro extends Objeto {
             this.juego.personaje.contenedorObjeto.y
         );
 
-        if (distCuadrada <= 200) {
+        if (distCuadrada <= 200 && this.estaEnJuego) {
             //console.log('Dist:', distCuadrada)
             this.juego.grid.remover(this);
             this.contenedorObjeto.removeChild(this);
             this.contenedorObjeto.removeChild(this.sprite);
-            //this.tesoros.remo
-            //this.juego.elementos.contador.aumentarContador();
+            //this.juego.tesoros.removeChild(this);
+            this.juego.elementos.contadorTesoro.tesorosEncontrados();
+            this.estaEnJuego = false;
         }
+
 
 
     }

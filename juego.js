@@ -183,7 +183,8 @@ class Juego {
     }
 
     condicionDeVictoria() {
-        if (this.elementos.temporizador && this.elementos.temporizador.tiempoAgotado) {
+        if (this.elementos.temporizador && this.elementos.temporizador.tiempoAgotado
+            && this.elementos.contadorTesoro.cantidad === 3) {
             this.win.mostrar();
             this.app.ticker.stop();
         }
@@ -191,6 +192,7 @@ class Juego {
 
     condicionDeDerrota() {
         if (this.personaje.vidas === 0) {
+            this.personaje.muerto = true;
             this.gameOver.mostrar();
             setTimeout(() => {
                 this.app.ticker.stop();
@@ -238,7 +240,7 @@ class Juego {
         }
 
         //this.condicionDeDerrota();
-        //this.condicionDeVictoria();
+        this.condicionDeVictoria();
 
         this.actualizarCamara();
     }

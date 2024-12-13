@@ -65,7 +65,7 @@ class Personaje extends Objeto {
         this.focus.y = this.contenedorObjeto.y;
 
         //0 a 1
-        this.focus.alpha = 0.5;
+        this.focus.alpha = 0.2;
 
         //  Eventos del teclado
         this.juego.app.stage.interactive = true;

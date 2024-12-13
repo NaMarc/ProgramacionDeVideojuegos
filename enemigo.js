@@ -25,11 +25,11 @@ class Enemigo extends Objeto {
     //var animacion
     this.animacion = this.cargarSpriteAnimado("Assets/Moscas/moscas.json", "CaminaAbajo");
 
-   /* const debugPoint = new PIXI.Graphics();
-    debugPoint.beginFill(0xff0000);
-    debugPoint.drawCircle(0, 0, 5);
-    debugPoint.endFill();
-    this.contenedorObjeto.addChild(debugPoint);*/
+    /* const debugPoint = new PIXI.Graphics();
+     debugPoint.beginFill(0xff0000);
+     debugPoint.drawCircle(0, 0, 5);
+     debugPoint.endFill();
+     this.contenedorObjeto.addChild(debugPoint);*/
 
   }
 
@@ -87,12 +87,13 @@ class Enemigo extends Objeto {
 
   actualizar() {
 
-    this.verificarEstadoDeVida();
-    this.atacar();
+
 
     this.mirarAlrededor();
     this.segunDatosCambiarDeEstado();
     this.hacerCosasSegunEstado();
+    this.verificarEstadoDeVida();
+    this.atacar();
 
     this.calcularAngulo();
 
@@ -269,10 +270,11 @@ class Enemigo extends Objeto {
       this.animacion = this.cargarSpriteAnimado("Assets/Sangre1/sangre_image.json", "Explosion");
 
       setTimeout(() => {
+        this.juego.elementos.contador.aumentarContador();
         this.juego.grid.remover(this);
         this.contenedorObjeto.removeChild(this);
         this.contenedorObjeto.removeChild(this.sprite);
-        this.juego.elementos.contador.aumentarContador();
+
       }, 2000);
     }
   }
@@ -303,44 +305,44 @@ class Enemigo extends Objeto {
     }
   }*/
 
-    verificarEstadoDeVida(){
-      const distCuadrada = distanciaAlCuadrado(
-         this.juego.personaje.contenedorObjeto.x,
-        this.juego.personaje.contenedorObjeto.y,
-        this.contenedorObjeto.x,
-        this.contenedorObjeto.y
-       
-      );
-      if( distCuadrada <= 140
-        && this.juego.personaje.estadoAtacando){
-        this.recibirAtaque()
+  verificarEstadoDeVida() {
+    const distCuadrada = distanciaAlCuadrado(
+      this.juego.personaje.contenedorObjeto.x,
+      this.juego.personaje.contenedorObjeto.y,
+      this.contenedorObjeto.x,
+      this.contenedorObjeto.y
+
+    );
+    if (distCuadrada <= 200
+      && this.juego.personaje.estadoAtacando) {
+      this.recibirAtaque()
+    }
+  }
+  atacar() {
+    const distCuadrada = distanciaAlCuadrado(
+      this.contenedorObjeto.x,
+      this.contenedorObjeto.y,
+      this.juego.personaje.contenedorObjeto.x,
+      this.juego.personaje.contenedorObjeto.y
+    );
+
+    if (distCuadrada <= 64 && this.estados.ATACAR) {
+      //console.log('Dist:', distCuadrada)
+      if (this.puedeAtacar) {
+        this.juego.personaje.vidas -= 10;
+
+        this.puedeAtacar = false;
+
+        setTimeout(() => {
+          this.puedeAtacar = true;
+        }, 2000);
+        console.log('Es atacado. Vidas del personaje:', this.juego.personaje.vidas);
+
+      } else {
+        //console.log('todavia no puede volver a atacar')
       }
     }
-    atacar(){
-        const distCuadrada = distanciaAlCuadrado(
-          this.contenedorObjeto.x,
-          this.contenedorObjeto.y,
-          this.juego.personaje.contenedorObjeto.x,
-          this.juego.personaje.contenedorObjeto.y
-        );
-
-      if(distCuadrada <= 64 && this.estados.ATACAR){
-        //console.log('Dist:', distCuadrada)
-        if(this.puedeAtacar){
-          this.juego.personaje.vidas -= 10;
-    
-          this.puedeAtacar = false;
-
-          setTimeout(() => {
-            this.puedeAtacar = true;
-          }, 2000);
-          console.log('Es atacado. Vidas del personaje:', this.juego.personaje.vidas);
-
-        }else {
-          //console.log('todavia no puede volver a atacar')
-        }
-      }
-    }
+  }
 
 }
 
