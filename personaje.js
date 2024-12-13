@@ -34,6 +34,8 @@ class Personaje extends Objeto {
         this.ataqueEnCurso = false;
         this.tiempoDeAtaque = 0.05;
         this.tiempoAtaqueRestante = 0;
+
+        this.muerto = false;
     }
 
     nuevaLuz() {
@@ -127,8 +129,6 @@ class Personaje extends Objeto {
         });
     }
 
-
-
     mover() {
         if (!this.spriteCargado) return;  // No hace nada si el sprite no esta cargado
 
@@ -155,7 +155,9 @@ class Personaje extends Objeto {
         if (!animacionDeseada) {
             if (this.ataqueEnCurso) {
                 animacionDeseada = 'Ataca';  // Si está atacando, usa la animación de ataque
-            } else {
+            }else if (this.muerto){
+                animacionDeseada = 'Muere';
+            }else {
                 animacionDeseada = 'Idle';  // De lo contrario, la animación "Idle"
             }
         }
@@ -190,13 +192,15 @@ class Personaje extends Objeto {
         this.contenedorObjeto.y += this.velocidad.y;
 
         if (this.ataqueEnCurso) {
-            this.tiempoAtaqueRestante -= this.juego.app.ticker.deltaTime / 1000;
+            this.tiempoAtaqueRestante -= this.juego.app.ticker.deltaTime / 500;
             if (this.tiempoAtaqueRestante <= 0) {
                 this.ataqueEnCurso = false;
                 this.estadoAtacando = false;
             }
         }
     }
+
+ 
 
     // Verificar si el movimiento es válido (dentro de los límites)
     esMovimientoValido(tecla) {
@@ -295,9 +299,10 @@ class Personaje extends Objeto {
                 this.juego.elementos.perderVida();
                 this.perdioVida = true;
             } else if (this.vidas <= 0) {
+                this.muerto = true;
                 this.juego.elementos.perderVida();
-                this.juego.condicionDeDerrota();
                 this.perdioVida = true;
+                this.juego.condicionDeDerrota();
             }
         } else {
             if (this.vidas !== 200 && this.vidas !== 100 && this.vidas !== 0) {

@@ -189,7 +189,10 @@ class Juego {
     condicionDeDerrota() {
         if (this.personaje.vidas === 0) {
             this.gameOver.mostrar();
-            this.app.ticker.stop();
+            setTimeout(() => {   
+            this.app.ticker.stop(); 
+            }, 1000);
+            
         }
     }
 
