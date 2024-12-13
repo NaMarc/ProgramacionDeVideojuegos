@@ -155,9 +155,9 @@ class Personaje extends Objeto {
         if (!animacionDeseada) {
             if (this.ataqueEnCurso) {
                 animacionDeseada = 'Ataca';  // Si está atacando, usa la animación de ataque
-            }else if (this.muerto){
+            } else if (this.muerto) {
                 animacionDeseada = 'Muere';
-            }else {
+            } else {
                 animacionDeseada = 'Idle';  // De lo contrario, la animación "Idle"
             }
         }
@@ -200,7 +200,7 @@ class Personaje extends Objeto {
         }
     }
 
- 
+
 
     // Verificar si el movimiento es válido (dentro de los límites)
     esMovimientoValido(tecla) {
@@ -214,8 +214,6 @@ class Personaje extends Objeto {
 
     actualizar() {
         //this.vecRepelerObs = this.repelerObstaculos(this.obtenerVecinos(), 5000);
-
-
 
         // if (!this.listo) return;
         this.mover();
@@ -299,9 +297,9 @@ class Personaje extends Objeto {
                 this.juego.elementos.perderVida();
                 this.perdioVida = true;
             } else if (this.vidas <= 0) {
-                this.muerto = true;
                 this.juego.elementos.perderVida();
                 this.perdioVida = true;
+                this.muerto = true;
                 this.juego.condicionDeDerrota();
             }
         } else {

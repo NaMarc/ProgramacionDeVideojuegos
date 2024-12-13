@@ -63,12 +63,13 @@ class Juego {
         this.obstaculos = [];
         this.enemigo = [];
         //this.mantis = [];
-        //this.tesoro = [];
+        this.tesoros = [];
 
-        this.agregarObstaculo("arbol", 20);
+        this.agregarObstaculo("arbol", 15);
         this.agregarObstaculo("piedra", 5);
         //this.agregarObstaculo("arbusto", 10);
-        //this.agregarTesoros("tesoro", 3);
+
+
         this.agregarEnemigos(100);
         //this.agregarMantis(10);
 
@@ -76,6 +77,7 @@ class Juego {
         this.iniciarEventos();
 
         this.personaje = new Personaje(200, 200, this, this.elementos, this.eventos);
+        this.agregarTesoros("tesoro", 3);
 
         this.ponerListeners();
 
@@ -130,15 +132,16 @@ class Juego {
 
     }
 
-    /* agregarTesoros(tipo, cantidad){
-         if (tipo === "tesoro") {
-             for (let i = 0; i < cantidad; i++) {
-                 const tesoro = (new Tesoro(Math.random() * this.ancho, Math.random() * this.alto, this, "Assets/tesoro.png"));
-                 this.tesoro.push(tesoro);
-                 this.objetos.push(tesoro);
-             }
-         }
-     }*/
+    agregarTesoros(tipo, cantidad) {
+        if (tipo === "tesoro") {
+            for (let i = 0; i < cantidad; i++) {
+                const tesoro = (new Tesoro(Math.random() * (this.canvasWidth - 500),
+                    Math.random() * (this.canvasHeight - 500), this, "Assets/totem1.png"));
+                this.tesoros.push(tesoro);
+                this.objetos.push(tesoro);
+            }
+        }
+    }
 
     agregarEnemigos(cant) {
         for (let i = 0; i < cant; i++) {
@@ -189,10 +192,10 @@ class Juego {
     condicionDeDerrota() {
         if (this.personaje.vidas === 0) {
             this.gameOver.mostrar();
-            setTimeout(() => {   
-            this.app.ticker.stop(); 
+            setTimeout(() => {
+                this.app.ticker.stop();
             }, 1000);
-            
+
         }
     }
 
@@ -227,6 +230,10 @@ class Juego {
         //** */
         for (let obstaculos of this.obstaculos) {
             obstaculos.actualizar();
+            // objeto.render();    
+        }
+        for (let tesoro of this.tesoros) {
+            tesoro.actualizar();
             // objeto.render();    
         }
 
